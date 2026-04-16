@@ -1,4 +1,3 @@
-
 import {
   HeadContent,
   Scripts,
@@ -6,17 +5,12 @@ import {
 } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
-import Footer from '../components/Footer'
-import Header from '../components/Header'
-
-// import ClerkProvider from '../integrations/clerk/provider'
+import Footer from '@/components/Footer'
+import Header from '@/components/Header'
 import { ClerkProvider } from '@clerk/tanstack-react-start'
+import TanStackQueryDevtools from '@/integrations/tanstack-query/devtools'
 
-import StoreDevtools from '../lib/demo-store-devtools'
-
-import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
-
-import appCss from '../styles.css?url'
+import appCss from '@/styles.css?url'
 
 import type { QueryClient } from '@tanstack/react-query'
 
@@ -37,7 +31,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         content: 'width=device-width, initial-scale=1',
       },
       {
-        title: 'TanStack Start Starter',
+        title: 'InFlow',
       },
     ],
     links: [
@@ -57,7 +51,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <HeadContent />
       </head>
-      <body className="font-sans antialiased [overflow-wrap:anywhere] selection:bg-[rgba(79,184,178,0.24)]">
+      <body className="font-sans antialiased wrap-anywhere selection:bg-[rgba(79,184,178,0.24)]">
         <ClerkProvider>
           <Header />
           {children}
@@ -71,65 +65,12 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                 name: 'Tanstack Router',
                 render: <TanStackRouterDevtoolsPanel />,
               },
-              StoreDevtools,
               TanStackQueryDevtools,
             ]}
           />
+          <Scripts />
         </ClerkProvider>
-        <Scripts />
       </body>
     </html>
   )
 }
-
-
-// import { ClerkProvider } from '@clerk/tanstack-react-start'
-// import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
-// import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
-//
-// import Header from '../components/Header'
-//
-// import appCss from '../styles.css?url'
-//
-// export const Route = createRootRoute({
-//   head: () => ({
-//     meta: [
-//       {
-//         charSet: 'utf-8',
-//       },
-//       {
-//         name: 'viewport',
-//         content: 'width=device-width, initial-scale=1',
-//       },
-//       {
-//         title: 'TanStack Start Starter',
-//       },
-//     ],
-//     links: [
-//       {
-//         rel: 'stylesheet',
-//         href: appCss,
-//       },
-//     ],
-//   }),
-//
-//   shellComponent: RootDocument,
-// })
-//
-// function RootDocument({ children }: { children: React.ReactNode }) {
-//   return (
-//     <html lang="en">
-//       <head>
-//         <HeadContent />
-//       </head>
-//       <body>
-//         <ClerkProvider>
-//           <Header />
-//           {children}
-//         </ClerkProvider>
-//         <TanStackRouterDevtools />
-//         <Scripts />
-//       </body>
-//     </html>
-//   )
-// }

@@ -1,5 +1,6 @@
 import {
   SignInButton,
+  SignUpButton,
   UserButton,
   Show,
   ClerkLoading,
@@ -9,7 +10,7 @@ import { Skeleton } from '#/components/ui/skeleton';
 
 export default function HeaderUser() {
   return (
-    <div className="h-7 w-7">
+    <>
       <ClerkLoading>
         <Skeleton className="h-7 w-7 animate-pulse rounded-full bg-gray-300" />
       </ClerkLoading>
@@ -19,8 +20,9 @@ export default function HeaderUser() {
         </Show>
         <Show when="signed-out">
           <SignInButton />
+          <SignUpButton />
         </Show>
       </ClerkLoaded>
-    </div>
+    </>
   )
 }

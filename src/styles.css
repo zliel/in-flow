@@ -254,11 +254,9 @@ pre code {
 }
 
 .feature-card {
-  background: linear-gradient(
-    165deg,
-    color-mix(in oklab, var(--card-bg-strong) 93%, white 7%),
-    var(--card-bg)
-  );
+  background: linear-gradient(165deg,
+      color-mix(in oklab, var(--card-bg-strong) 93%, white 7%),
+      var(--card-bg));
   box-shadow:
     0 1px 0 var(--border-inner) inset,
     0 18px 34px rgba(61, 79, 111, 0.08),
@@ -435,9 +433,11 @@ a {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+
   html {
     @apply font-sans;
   }

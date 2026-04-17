@@ -1,3 +1,4 @@
+import { Card } from '#/components/ui/card'
 import { createFileRoute } from '@tanstack/react-router'
 import { Layers, CalendarDays, Gauge } from 'lucide-react'
 
@@ -50,7 +51,7 @@ function About() {
         <p className="eyebrow mb-8">How It Works</p>
         <div className="flex flex-col gap-5 sm:flex-row">
           {steps.map((step, _) => (
-            <article
+            <Card
               key={step.title}
               className="group card feature-card flex-1 rounded-2xl p-7"
             >
@@ -65,7 +66,7 @@ function About() {
               <p className="m-0 leading-relaxed text-(--text-muted)">
                 {step.description}
               </p>
-            </article>
+            </Card>
           ))}
         </div>
       </section>

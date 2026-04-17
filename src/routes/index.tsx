@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { Calendar, Zap } from 'lucide-react'
+import { ArrowRight, Calendar, Zap } from 'lucide-react'
 import { motion } from 'framer-motion'
+import { Button } from '#/components/ui/button'
+import { Card } from '#/components/ui/card'
 
 export const Route = createFileRoute('/')({ component: App })
 
@@ -144,8 +146,9 @@ function App() {
       <section className="relative overflow-hidden rounded-[2rem] py-8 sm:py-12">
         <div className="relative">
           <h1
-            className={`mb-6 max-w-3xl text-5xl font-bold leading-[1.02] tracking-tight text-(--text) transition-all sm:text-6xl md:text-7xl ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'
-              }`}
+            className={`mb-6 max-w-3xl text-5xl font-bold leading-[1.02] tracking-tight text-(--text) transition-all sm:text-6xl md:text-7xl ${
+              isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'
+            }`}
             style={{
               transitionDuration: '800ms',
               transitionDelay: '100ms',
@@ -155,8 +158,9 @@ function App() {
             Work when you're wired.
           </h1>
           <p
-            className={`mb-12 max-w-xl text-xl leading-relaxed text-(--text-muted) transition-all ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'
-              }`}
+            className={`mb-12 max-w-xl text-xl leading-relaxed text-(--text-muted) transition-all ${
+              isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'
+            }`}
             style={{
               transitionDuration: '800ms',
               transitionDelay: '250ms',
@@ -165,60 +169,51 @@ function App() {
           >
             InFlow reveals where your schedule doesn't match your energy.
           </p>
-          <Link
-            to="/about"
-            className={`inline-flex items-center gap-2.5 rounded-full bg-primary px-7 py-3.5 text-sm font-semibold text-white!  no-underline transition-all hover:-translate-y-0.5 hover:bg-(--primary-hover) active:scale-[0.98] ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'
-              }`}
+          <Button
+            asChild
+            size="lg"
+            className={`group ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'} text-primary-foreground! align-center justify-center`}
             style={{
-              transitionDuration: '800ms',
+              opacity: isLoaded ? 1 : 0,
+              transform: isLoaded ? 'translateY(0)' : 'translateY(20px)',
+              transition:
+                'opacity 800ms cubic-bezier(0.16, 1, 0.3, 1), transform 800ms cubic-bezier(0.16, 1, 0.3, 1)',
               transitionDelay: '400ms',
-              transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
             }}
           >
-            Start Planning
-            <svg
-              className="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M13 7l5 5m0 0l-5 5m5-5H6"
+            <Link to="/about">
+              Start Planning
+              <ArrowRight
+                data-icon="inline-end"
+                className="transition-transform duration-200 group-hover:translate-x-1"
               />
-            </svg>
-          </Link>
+            </Link>
+          </Button>
         </div>
       </section>
 
       {/* Features */}
       <section className="mt-10 flex flex-col gap-5 sm:flex-row">
         {features.map((feature, index) => (
-          <article
+          <Card
             key={feature.title}
-            className={`group card feature-card flex-1 rounded-2xl p-7 transition-all ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'
-              }`}
+            className={`feature-card group flex-1 p-7 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
             style={{
-              transitionDuration: '800ms',
+              transition: `opacity 800ms cubic-bezier(0.16, 1, 0.3, 1)`,
               transitionDelay: `${index * 120 + 550}ms`,
-              transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
             }}
           >
-            <div className="flex items-center gap-3 mb-5">
-              <div className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+            <div className="mb-5 flex items-center gap-3">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
                 <feature.icon className="h-6 w-6" strokeWidth={1.5} />
               </div>
-              <h2 className="text-xl font-semibold text-(--text)">
-                {feature.title}
-              </h2>
+              <h2 className="text-xl font-semibold">{feature.title}</h2>
             </div>
 
-            <p className="m-0 text-base leading-relaxed text-(--text-muted)">
+            <p className="m-0 text-base leading-relaxed text-muted-foreground">
               {feature.description}
             </p>
-          </article>
+          </Card>
         ))}
       </section>
     </main>

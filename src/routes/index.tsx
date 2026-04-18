@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { ArrowRight, Calendar, Zap } from 'lucide-react'
 import { motion } from 'framer-motion'
-import { Button } from '#/components/ui/button'
-import { Card } from '#/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
 
 export const Route = createFileRoute('/')({ component: App })
 

@@ -4,9 +4,9 @@ import {
   UserButton,
   Show,
   ClerkLoading,
-  ClerkLoaded
+  ClerkLoaded,
 } from '@clerk/tanstack-react-start'
-import { Skeleton } from '#/components/ui/skeleton';
+import { Skeleton } from '@/components/ui/skeleton'
 
 export default function HeaderUser() {
   return (

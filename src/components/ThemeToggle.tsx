@@ -61,7 +61,11 @@ export default function ThemeToggle() {
       title={`Theme: ${mode}. Click to switch.`}
       className="rounded-full p-2 text-primary transition-colors hover:bg-primary/10 hover:text-accent-foreground"
     >
-      {mode === 'dark' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+      {mode === 'dark' ? (
+        <Moon className="h-4 w-4" />
+      ) : (
+        <Sun className="h-4 w-4" />
+      )}
     </button>
   )
 }

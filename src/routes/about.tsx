@@ -1,7 +1,6 @@
-import { Card } from '#/components/ui/card'
+import { Card } from '@/components/ui/card'
 import { createFileRoute } from '@tanstack/react-router'
 import { Layers, CalendarDays, Gauge } from 'lucide-react'
-
 
 export const Route = createFileRoute('/about')({
   component: About,
@@ -38,8 +37,8 @@ function About() {
           every hour.
         </h1>
         <h3 className="mb-0 text-xl font-semibold leading-tight text-(--text-muted) sm:text-2xl">
-          Tuesday at 10am feels different than Friday at 3pm. But, we
-          schedule the same deep work anywhere, and wonder why we burn out.
+          Tuesday at 10am feels different than Friday at 3pm. But, we schedule
+          the same deep work anywhere, and wonder why we burn out.
         </h3>
       </section>
 
@@ -80,9 +79,8 @@ function About() {
           The goal isn't to match your schedule perfectly.
         </h2>
         <h3 className="mt-4 text-xl font-semibold leading-tight text-(--text-muted) sm:text-2xl">
-          It's to see the
-          patterns: where you're consistently overcommitting, which days you
-          overestimate, and when to lock in vs. when to rest.
+          It's to see the patterns: where you're consistently overcommitting,
+          which days you overestimate, and when to lock in vs. when to rest.
         </h3>
       </section>
     </main>

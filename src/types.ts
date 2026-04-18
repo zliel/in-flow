@@ -17,4 +17,3 @@ export interface Block {
   is_recurring: boolean
   created_at: string
 }
-

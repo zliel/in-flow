@@ -1,8 +1,7 @@
-import { createFileRoute, Outlet } from '@tanstack/react-router'
+import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
 
 import { createServerFn } from '@tanstack/react-start'
 import { auth } from '@clerk/tanstack-react-start/server'
-import { redirect } from '@tanstack/react-router'
 import { createClient } from '@supabase/supabase-js'
 
 const requireAuth = createServerFn().handler(async () => {

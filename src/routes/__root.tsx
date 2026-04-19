@@ -4,11 +4,11 @@ import {
   createRootRouteWithContext,
 } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
+import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 import Footer from '@/components/Footer'
 import Header from '@/components/Header'
 import { ClerkProvider } from '@clerk/tanstack-react-start'
-import TanStackQueryDevtools from '@/integrations/tanstack-query/devtools'
 import appCss from '@/styles.css?url'
 import type { QueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
@@ -127,7 +127,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
               },
               {
                 name: 'Tanstack Query',
-                render: <TanStackQueryDevtools />,
+                render: <ReactQueryDevtoolsPanel />,
               },
             ]}
           />

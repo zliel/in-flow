@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import ThemeToggle from './ThemeToggle'
 import HeaderUser from '@/integrations/clerk/header-user'
+import { Show, ClerkLoaded } from '@clerk/tanstack-react-start'
 
 export default function Header() {
   return (
@@ -31,6 +32,18 @@ export default function Header() {
             >
               About
             </Link>
+            <ClerkLoaded>
+              <Show when="signed-in">
+                <Link
+                <Link
+                  to="/dashboard"
+                  className="nav-link"
+                  activeProps={{ className: 'nav-link is-active' }}
+                >
+                  Dashboard
+                </Link>
+              </Show>
+            </ClerkLoaded>
           </div>
         </div>
 

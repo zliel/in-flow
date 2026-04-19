@@ -1,5 +1,6 @@
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
 
+import { queryOptions } from '@tanstack/react-query'
 import { createServerFn } from '@tanstack/react-start'
 import { auth } from '@clerk/tanstack-react-start/server'
 import { createClient } from '@supabase/supabase-js'
@@ -46,6 +47,14 @@ const requireAuth = createServerFn().handler(async () => {
 })
 
 export const Route = createFileRoute('/_authenticated')({
-  beforeLoad: async () => await requireAuth(),
+  beforeLoad: async ({ context }) => {
+    await context.queryClient.fetchQuery(
+      queryOptions({
+        queryKey: ['requireAuth'],
+        queryFn: () => requireAuth(),
+        staleTime: 5 * 60 * 1000,
+      }),
+    )
+  },
   component: () => <Outlet />,
 })

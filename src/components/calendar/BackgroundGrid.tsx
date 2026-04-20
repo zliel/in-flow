@@ -7,6 +7,7 @@ interface BackgroundGridProps {
   blockTypes: BlockType[]
   filteredBlocks: Block[]
   hourHeight?: number
+  onEventClick?: (block: Block) => void
 }
 
 const HOURS = Array.from({ length: 24 }, (_, i) => i)
@@ -18,11 +19,17 @@ export default function BackgroundGrid({
   blockTypes,
   filteredBlocks,
   hourHeight = DEFAULT_HOUR_HEIGHT,
+  onEventClick,
 }: BackgroundGridProps) {
   const getBlockColor = (blockTypeId: string | null) => {
     if (!blockTypeId) return 'var(--primary)'
     const bt = blockTypes.find((t) => t.id === blockTypeId)
     return bt?.color || 'var(--primary)'
+  }
+
+  const handleEventClick = (block: Block, e: React.MouseEvent) => {
+    e.stopPropagation()
+    onEventClick?.(block)
   }
 
   return (
@@ -65,13 +72,16 @@ export default function BackgroundGrid({
                   return (
                     <div
                       key={block.id}
-                      className="absolute left-1 right-1 cursor-pointer rounded-lg px-2 py-1 transition hover:scale-[1.02] hover:shadow-lg"
+                      className="absolute left-1 right-1 cursor-pointer rounded-lg px-2 py-1 transition-all hover:scale-[1.02] hover:shadow-lg"
                       style={{
                         top: `${(start.getMinutes() / 60) * hourHeight}px`,
                         height: `${Math.max(duration, 24)}px`,
                         backgroundColor: color,
                         borderLeft: `3px solid ${color}`,
+                        transition:
+                          'background-color 500ms ease-in-out, border-color 500ms ease-in-out, box-shadow 200ms',
                       }}
+                      onClick={(e) => handleEventClick(block, e)}
                     >
                       <p className="truncate text-xs font-semibold text-white">
                         {block.title || 'Untitled'}

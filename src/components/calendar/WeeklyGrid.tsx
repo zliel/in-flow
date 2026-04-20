@@ -41,7 +41,6 @@ export default function WeeklyGrid() {
         <DayHeaderRow days={weekDays} />
         <BackgroundGrid
           days={weekDays}
-          blocks={blocks}
           blockTypes={blockTypes}
           filteredBlocks={filteredBlocks}
           onEventClick={handleEventClick}

@@ -1,9 +1,9 @@
 import { format, isSameDay } from 'date-fns'
 import type { Block, BlockType } from '#/types'
+import { computeEventLanes, type EventLane } from '#/utils/calendar'
 
 interface BackgroundGridProps {
   days: Date[]
-  blocks: Block[]
   blockTypes: BlockType[]
   filteredBlocks: Block[]
   hourHeight?: number
@@ -15,7 +15,6 @@ const DEFAULT_HOUR_HEIGHT = 60
 
 export default function BackgroundGrid({
   days,
-  blocks,
   blockTypes,
   filteredBlocks,
   hourHeight = DEFAULT_HOUR_HEIGHT,
@@ -32,6 +31,13 @@ export default function BackgroundGrid({
     onEventClick?.(block)
   }
 
+  const dayColumnBlocks = days.map((day) => ({
+    day,
+    blocks: filteredBlocks.filter((b) =>
+      isSameDay(new Date(b.start_time), day),
+    ),
+  }))
+
   return (
     <tbody>
       {HOURS.map((hour) => (
@@ -45,55 +51,67 @@ export default function BackgroundGrid({
               style={{ height: hourHeight }}
             >
               <span className="-mt-2 text-xs font-medium text-(--text-muted)">
-                {/* using format() from date-fns to convert 24h to 12h format */}
                 {format(new Date().setHours(hour, 0, 0, 0), 'h aaaa')}
               </span>
             </div>
           </td>
-          {days.map((day) => (
-            <td
-              key={`${day.toISOString()}-${hour}`}
-              className="relative border-t border-l border-border p-0"
-              style={{ height: hourHeight }}
-            >
-              {filteredBlocks
-                .filter((b) => {
-                  const bStart = new Date(b.start_time)
-                  return isSameDay(bStart, day) && bStart.getHours() === hour
-                })
-                .map((block) => {
-                  const start = new Date(block.start_time)
-                  const end = new Date(block.end_time)
-                  const duration =
-                    (end.getHours() - start.getHours()) * hourHeight +
-                    ((end.getMinutes() - start.getMinutes()) / 60) * hourHeight
-                  const color = getBlockColor(block.block_type_id)
+          {days.map((day, dayIdx) => {
+            const { blocks: dayBlocks } = dayColumnBlocks[dayIdx]
+            const laneMap = computeEventLanes(dayBlocks, day)
 
-                  return (
-                    <div
-                      key={block.id}
-                      className="absolute left-1 right-1 cursor-pointer rounded-lg px-2 py-1 transition-all hover:scale-[1.02] hover:shadow-lg"
-                      style={{
-                        top: `${(start.getMinutes() / 60) * hourHeight}px`,
-                        height: `${Math.max(duration, 24)}px`,
-                        backgroundColor: color,
-                        borderLeft: `3px solid ${color}`,
-                        transition:
-                          'background-color 500ms ease-in-out, border-color 500ms ease-in-out, box-shadow 200ms',
-                      }}
-                      onClick={(e) => handleEventClick(block, e)}
-                    >
-                      <p className="truncate text-xs font-semibold text-white">
-                        {block.title || 'Untitled'}
-                      </p>
-                      <p className="truncate text-[10px] text-white/80">
-                        {format(start, 'h:mm a')} - {format(end, 'h:mm a')}
-                      </p>
-                    </div>
-                  )
-                })}
-            </td>
-          ))}
+            return (
+              <td
+                key={`${day.toISOString()}-${hour}`}
+                className="relative border-t border-l border-border p-0"
+                style={{ height: hourHeight }}
+              >
+                {dayBlocks
+                  .filter((b) => new Date(b.start_time).getHours() === hour)
+                  .map((block) => {
+                    const start = new Date(block.start_time)
+                    const end = new Date(block.end_time)
+                    const duration =
+                      (end.getHours() - start.getHours()) * hourHeight +
+                      ((end.getMinutes() - start.getMinutes()) / 60) *
+                        hourHeight
+                    const color = getBlockColor(block.block_type_id)
+                    const laneData: EventLane | undefined = laneMap.get(
+                      block.id,
+                    )
+                    const lane = laneData?.lane ?? 0
+                    const totalLanes = laneData?.totalLanes ?? 1
+                    const widthPercent = 100 / totalLanes
+                    const leftPercent = lane * widthPercent
+
+                    return (
+                      <div
+                        key={block.id}
+                        className="absolute inset-x-1 cursor-pointer select-none rounded-lg px-2 py-1 hover:scale-[1.02] hover:shadow-lg"
+                        style={{
+                          top: `${(start.getMinutes() / 60) * hourHeight}px`,
+                          height: `${Math.max(duration, 24)}px`,
+                          width: `${widthPercent - 2}%`,
+                          left: `${leftPercent + 1}%`,
+                          backgroundColor: color,
+                          borderLeft: `3px solid ${color}`,
+                          zIndex: 10,
+                          transition:
+                            'background-color 500ms ease-in-out, border-color 500ms ease-in-out, box-shadow 200ms, scale 200ms ease-in-out, height 200ms ease-in-out',
+                        }}
+                        onClick={(e) => handleEventClick(block, e)}
+                      >
+                        <p className="truncate text-xs font-semibold text-white">
+                          {block.title || 'Untitled'}
+                        </p>
+                        <p className="truncate text-[10px] text-white/80">
+                          {format(start, 'h:mm a')} - {format(end, 'h:mm a')}
+                        </p>
+                      </div>
+                    )
+                  })}
+              </td>
+            )
+          })}
         </tr>
       ))}
     </tbody>

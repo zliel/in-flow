@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import { ChevronLeft, ChevronRight, Plus, CalendarDays } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -17,14 +16,16 @@ import {
   getDay,
   addDays,
 } from 'date-fns'
+import { useCalendar } from './CalendarContext'
 
-type ViewMode = 'month' | 'week' | 'day'
-
-// WARN: None of the rest of the calendar has access to this state, so the view for it doesn't change.
-// Maybe we should lift this state up to the parent component and pass it down as a prop?
 export default function CalendarHeader() {
-  const [currentDate, setCurrentDate] = useState(new Date())
-  const [viewMode, setViewMode] = useState<ViewMode>('week')
+  const {
+    currentDate,
+    setCurrentDate,
+    viewMode,
+    setViewMode,
+    setIsAddEventOpen,
+  } = useCalendar()
 
   const navigatePrev = () => {
     if (viewMode === 'month') {
@@ -128,7 +129,11 @@ export default function CalendarHeader() {
             Month
           </button>
         </div>
-        <Button size="sm" className="gap-2">
+        <Button
+          size="sm"
+          className="gap-2"
+          onClick={() => setIsAddEventOpen(true)}
+        >
           <Plus className="h-4 w-4" />
           <span className="hidden sm:inline">Add Event</span>
         </Button>

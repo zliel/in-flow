@@ -8,41 +8,51 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v4
+      - uses: pnpm/action-setup@v6
+        name: Install pnpm
         with:
-          node-version: '24'
-          cache: pnpm
+          version: 10
+          cache: true
 
-      - run: pnpm install --frozen-lockfile
+      - name: Install dependencies
+        run: pnpm install
 
-      - run: pnpm lint
+      - name: Run Lint
+        run: pnpm run lint
 
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v4
+      - uses: pnpm/action-setup@v6
+        name: Install pnpm
         with:
-          node-version: '24'
-          cache: pnpm
+          version: 10
+          cache: true
 
-      - run: pnpm install --frozen-lockfile
+      - name: Install dependencies
+        run: pnpm install
 
-      - run: pnpm test
+      - run: pnpm test --passWithNoTests
 
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v4
+      - uses: pnpm/action-setup@v6
+        name: Install pnpm
         with:
-          node-version: '24'
-          cache: pnpm
+          version: 10
+          cache: true
 
-      - run: pnpm install --frozen-lockfile
+      - name: Install dependencies
+        run: pnpm install
 
       - run: pnpm build

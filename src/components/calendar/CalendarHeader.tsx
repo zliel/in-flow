@@ -59,83 +59,93 @@ export default function CalendarHeader() {
     return `${format(start, 'MMM')} - ${format(end, 'MMM yyyy')}`
   }
 
+  const title = getTitle()
+
   return (
-    <header className="sticky top-0 z-40 flex flex-col gap-3 border-b border-border bg-(--background-elevated)/95 px-4 py-3 backdrop-blur-md sm:flex-row sm:items-center sm:justify-between">
-      <div className="flex items-center gap-4">
+    <header className="sticky top-0 z-40 flex flex-col gap-3 border-b border-border bg-(--background-elevated)/95 px-3 py-2.5 backdrop-blur-md sm:gap-0 sm:flex-row sm:items-center sm:justify-between sm:px-4 sm:py-3">
+      <div className="flex items-center justify-between gap-2 sm:gap-4">
         <Link
           to="/dashboard"
-          className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary transition hover:bg-(--primary)/20"
+          className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary transition hover:bg-(--primary)/20 sm:h-10 sm:w-10"
         >
-          <CalendarDays className="h-5 w-5" />
+          <CalendarDays className="h-4 w-4 sm:h-5 sm:w-5" />
         </Link>
-        <div className="flex items-center gap-2">
+
+        <div className="flex items-center gap-1 sm:gap-2">
           <Button
-            variant="outline"
+            variant="ghost"
             size="icon"
             onClick={navigatePrev}
-            className="h-9 w-9"
+            className="h-8 w-8 sm:h-9 sm:w-9"
           >
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
           </Button>
+          <h2 className="min-w-[4rem] truncate text-base font-semibold tracking-tight sm:text-xl">
+            {title}
+          </h2>
           <Button
-            variant="outline"
+            variant="ghost"
             size="icon"
             onClick={navigateNext}
-            className="h-9 w-9"
+            className="h-8 w-8 sm:h-9 sm:w-9"
           >
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
           </Button>
         </div>
-        <h2 className="text-xl font-semibold tracking-tight">{getTitle()}</h2>
+
         <Button
           variant="ghost"
+          size="sm"
           onClick={goToToday}
-          className="hidden text-sm font-medium sm:inline-flex"
+          className="text-xs font-medium sm:text-sm"
         >
           Today
         </Button>
       </div>
 
-      <div className="flex items-center gap-2">
-        <div className="flex rounded-xl border border-border p-1">
+      <div className="flex items-center justify-between gap-2 sm:gap-2">
+        <div className="flex rounded-xl border border-border p-0.5 sm:p-1">
           <button
             onClick={() => setViewMode('day')}
-            className={`rounded-lg px-3 py-1.5 text-sm font-medium transition ${
+            className={`rounded-lg px-2.5 py-1.5 text-xs font-medium transition sm:px-3 sm:text-sm ${
               viewMode === 'day'
                 ? 'bg-primary text-primary-foreground'
                 : 'text-(--text-muted) hover:text-(--text)'
             }`}
           >
-            Day
+            <span className="sm:hidden">D</span>
+            <span className="hidden sm:inline">Day</span>
           </button>
           <button
             onClick={() => setViewMode('week')}
-            className={`rounded-lg px-3 py-1.5 text-sm font-medium transition ${
+            className={`rounded-lg px-2.5 py-1.5 text-xs font-medium transition sm:px-3 sm:text-sm ${
               viewMode === 'week'
                 ? 'bg-primary text-primary-foreground'
                 : 'text-(--text-muted) hover:text-(--text)'
             }`}
           >
-            Week
+            <span className="sm:hidden">W</span>
+            <span className="hidden sm:inline">Week</span>
           </button>
           <button
             onClick={() => setViewMode('month')}
-            className={`rounded-lg px-3 py-1.5 text-sm font-medium transition ${
+            className={`rounded-lg px-2.5 py-1.5 text-xs font-medium transition sm:px-3 sm:text-sm ${
               viewMode === 'month'
                 ? 'bg-primary text-primary-foreground'
                 : 'text-(--text-muted) hover:text-(--text)'
             }`}
           >
-            Month
+            <span className="sm:hidden">M</span>
+            <span className="hidden sm:inline">Month</span>
           </button>
         </div>
         <Button
           size="sm"
-          className="gap-2"
+          className="gap-1.5 h-8 px-3 sm:gap-2 sm:h-9 sm:px-4"
           onClick={() => setIsAddEventOpen(true)}
         >
-          <Plus className="h-4 w-4" />
-          <span className="hidden sm:inline">Add Event</span>
+          <Plus className="h-4 w-4 sm:h-4 sm:w-4" />
+          Add Event
         </Button>
       </div>
     </header>

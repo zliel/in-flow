@@ -47,7 +47,7 @@ export default function BackgroundGrid({
             style={{ height: hourHeight }}
           >
             <div
-              className="flex h-15 w-15 items-center justify-end border-t pr-2"
+              className="flex h-15 w-12 sm:w-15 items-center justify-center sm:justify-end border-t sm:pr-2"
               style={{ height: hourHeight }}
             >
               <span className="-mt-2 text-xs font-medium text-(--text-muted)">

@@ -28,6 +28,7 @@
   --bg-base: #edf0f7;
   --bg-warm: #e8ecf5;
   --header-bg: rgba(245, 247, 250, 0.88);
+  --dropdown-bg: rgba(245, 247, 250, 0.96);
   --badge-bg: rgba(255, 255, 255, 0.82);
   --badge-border: rgba(61, 79, 111, 0.15);
   --link-bg-hover: rgba(255, 255, 255, 0.92);
@@ -115,6 +116,7 @@
     --bg-base: #0f1424;
     --bg-warm: #131829;
     --header-bg: rgba(15, 20, 36, 0.85);
+    --dropdown-bg: rgba(15, 20, 36, 0.96);
     --badge-bg: rgba(25, 32, 54, 0.88);
     --badge-border: rgba(138, 166, 212, 0.2);
     --link-bg-hover: rgba(35, 44, 68, 0.85);

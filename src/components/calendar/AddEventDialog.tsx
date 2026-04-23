@@ -20,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { DateTimePicker } from '@/components/ui/date-time-picker'
 import { useCalendar } from './CalendarContext'
 import { createBlock, updateBlock, deleteBlock } from '@/utils/server-blocks'
 import type { BlockType } from '@/types'
@@ -189,7 +190,7 @@ export default function AddEventDialog({ blockTypes }: AddEventDialogProps) {
 
   return (
     <Dialog open={isAddEventOpen} onOpenChange={handleOpenChange}>
-      <DialogContent>
+      <DialogContent className="sm:max-w-lg max-w-[calc(100%-2rem)]">
         <DialogHeader>
           <DialogTitle>{isEditMode ? 'Edit Event' : 'Add Event'}</DialogTitle>
           <DialogDescription>
@@ -247,31 +248,19 @@ export default function AddEventDialog({ blockTypes }: AddEventDialogProps) {
             </Select>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label htmlFor="startTime" className="text-sm font-medium">
-                Start
-              </label>
-              <Input
-                id="startTime"
-                type="datetime-local"
-                value={startTime}
-                required
-                onChange={(e) => setStartTime(e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <label htmlFor="endTime" className="text-sm font-medium">
-                End
-              </label>
-              <Input
-                id="endTime"
-                type="datetime-local"
-                value={endTime}
-                required
-                onChange={(e) => setEndTime(e.target.value)}
-              />
-            </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <DateTimePicker
+              id="startTime"
+              label="Start"
+              value={startTime}
+              onChange={setStartTime}
+            />
+            <DateTimePicker
+              id="endTime"
+              label="End"
+              value={endTime}
+              onChange={setEndTime}
+            />
           </div>
 
           <DialogFooter>

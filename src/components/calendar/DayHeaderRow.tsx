@@ -9,7 +9,7 @@ export default function DayHeaderRow({ days }: DayHeaderRowProps) {
     <thead>
       <tr>
         <th
-          className="sticky top-0 left-0 z-30 w-15 bg-(--background-elevated) p-0 border-r border-border"
+          className="sticky top-0 left-0 z-30 w-12 sm:w-15 bg-(--background-elevated) p-0 border-r border-border"
           style={{ height: 60 }}
         />
         {days.map((day) => (

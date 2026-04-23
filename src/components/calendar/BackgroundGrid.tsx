@@ -1,6 +1,7 @@
 import { format, isSameDay } from 'date-fns'
 import type { Block, BlockType } from '#/types'
-import { computeEventLanes, type EventLane } from '#/utils/calendar'
+import { computeEventLanes } from '#/utils/calendar'
+import type { EventLane } from '#/utils/calendar'
 
 interface BackgroundGridProps {
   days: Date[]

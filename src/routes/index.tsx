@@ -181,7 +181,7 @@ function App() {
               transitionDelay: '400ms',
             }}
           >
-            <Link to="/about">
+            <Link to="/dashboard">
               Start Planning
               <ArrowRight
                 data-icon="inline-end"

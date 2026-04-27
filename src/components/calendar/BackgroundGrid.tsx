@@ -2,6 +2,8 @@ import { format, isSameDay } from 'date-fns'
 import type { Block, BlockType } from '#/types'
 import { computeEventLanes } from '#/utils/calendar'
 import type { EventLane } from '#/utils/calendar'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { EnergyIcon } from '@hugeicons/core-free-icons'
 
 interface BackgroundGridProps {
   days: Date[]
@@ -12,7 +14,7 @@ interface BackgroundGridProps {
 }
 
 const HOURS = Array.from({ length: 24 }, (_, i) => i)
-const DEFAULT_HOUR_HEIGHT = 60
+const DEFAULT_HOUR_HEIGHT = 80
 
 export default function BackgroundGrid({
   days,
@@ -25,6 +27,12 @@ export default function BackgroundGrid({
     if (!blockTypeId) return 'var(--primary)'
     const bt = blockTypes.find((t) => t.id === blockTypeId)
     return bt?.color || 'var(--primary)'
+  }
+
+  const getEnergyRequired = (blockTypeId: string | null): number | null => {
+    if (!blockTypeId) return null
+    const bt = blockTypes.find((t) => t.id === blockTypeId)
+    return bt?.default_energy_required ?? null
   }
 
   const handleEventClick = (block: Block, e: React.MouseEvent) => {
@@ -84,6 +92,9 @@ export default function BackgroundGrid({
                     const widthPercent = 100 / totalLanes
                     const leftPercent = lane * widthPercent
 
+                    const energyRequired = getEnergyRequired(
+                      block.block_type_id,
+                    )
                     return (
                       <div
                         key={block.id}
@@ -107,6 +118,19 @@ export default function BackgroundGrid({
                         <p className="truncate text-[10px] text-white/80">
                           {format(start, 'h:mm a')} - {format(end, 'h:mm a')}
                         </p>
+                        {energyRequired !== null && (
+                          <>
+                            <span className="inline-flex items-center rounded-full bg-white/20 px-1.5 py-0.5 font-medium text-white/90">
+                              <HugeiconsIcon
+                                icon={EnergyIcon}
+                                strokeWidth={2}
+                                size={18}
+                                className="mr-0.5"
+                              />
+                              {energyRequired}
+                            </span>
+                          </>
+                        )}
                       </div>
                     )
                   })}

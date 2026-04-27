@@ -1,209 +1,191 @@
-Welcome to your new TanStack Start app! 
+# <center>InFlow</center>
 
-# Getting Started
+> **Work when you're wired.**
 
-To run this application:
+InFlow is a weekly planning and energy alignment tool that helps you schedule time blocks around your natural energy levels. Plan recurring weekly tasks, rate your daily energy (1-5), and get insights into where your schedule doesn't match your capacity.
+
+## Table of Contents
+
+1. [Key Features](#key-features)
+2. [Tech Stack](#tech-stack)
+3. [Prerequisites](#prerequisites)
+4. [Getting Started](#getting-started)
+5. [Environment Variables](#environment-variables)
+6. [Contributing](#contributing)
+
+---
+
+## Key Features
+
+- **Weekly Planning**: Create recurring time blocks (deep work, meetings, admin, etc.) that repeat every week with a single setup
+- **Energy Alignment**: Rate your energy level (1-5) each evening to track how well your schedule matches your capacity
+- **Visual Calendar**: Intuitive weekly grid with color-coded block types, overlapping event handling, and drag-friendly interactions
+- **Clerk Authentication**: Secure, passwordless auth with Clerk integrated directly into TanStack Start
+- **Supabase Backend**: PostgreSQL database with Row Level Security (RLS) to keep user data isolated
+
+---
+
+## Tech Stack
+
+| Category            | Technology                                                               |
+| ------------------- | ------------------------------------------------------------------------ |
+| **Framework**       | [TanStack Start](https://tanstack.com/start) (full-stack React with SSR) |
+| **Language**        | TypeScript 5.7+                                                          |
+| **Frontend**        | React 19, TanStack Router (file-based), TanStack Query, TanStack Store   |
+| **Styling**         | Tailwind CSS v4, shadcn/ui (radix-maia preset), HugeIcons, Framer Motion |
+| **Authentication**  | Clerk (@clerk/tanstack-react-start)                                      |
+| **Database**        | Supabase (PostgreSQL) with Row Level Security                            |
+| **Package Manager** | pnpm                                                                     |
+| **Testing**         | Vitest, @testing-library/react, Playwright (e2e)                         |
+| **Dev Tools**       | Storybook, TanStack DevTools, ESLint, Prettier                           |
+| **Build Tool**      | Vite 8                                                                   |
+
+---
+
+## Prerequisites
+
+Ensure you have the following installed before setting up the project:
+
+- **Node.js** 20 or higher ([download](https://nodejs.org/))
+- **pnpm** (recommended) or npm:
+
+  ```bash
+  # Install pnpm globally
+  npm install -g pnpm
+  ```
+
+- **Clerk Account**: Sign up at [clerk.com](https://clerk.com) to get API keys
+- **Supabase Project**: Create a project at [supabase.com](https://supabase.com) for the database
+
+---
+
+## Getting Started
+
+Follow these steps to set up the project locally from scratch:
+
+### 1. Clone the Repository
 
 ```bash
-npm install
-npm run dev
+git clone https://github.com/your-username/in-flow.git
+cd in-flow
 ```
 
-# Building For Production
+### 2. Install Dependencies
 
-To build this application for production:
+This project uses pnpm as the package manager:
 
 ```bash
-npm run build
+pnpm install
 ```
 
-## Testing
+### 3. Environment Setup
 
-This project uses [Vitest](https://vitest.dev/) for testing. You can run the tests with:
+Copy the example environment file:
 
 ```bash
-npm run test
+cp .env.example .env.local
 ```
 
-## Styling
+Open `.env.local` and fill in your credentials (see [Environment Variables](#environment-variables) for details):
 
-This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
+```env
+# Clerk Authentication
+VITE_CLERK_PUBLISHABLE_KEY=pk_test_xxx
+CLERK_SECRET_KEY=sk_test_xxx
+VITE_CLERK_SIGN_IN_URL=/sign-in
+VITE_CLERK_SIGN_UP_URL=/sign-up
 
-### Removing Tailwind CSS
+# Supabase
+VITE_SUPABASE_URL=https://xxx.supabase.co
+VITE_SUPABASE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
 
-If you prefer not to use Tailwind CSS:
+### 4. Set Up Supabase Database
 
-1. Remove the demo pages in `src/routes/demo/`
-2. Replace the Tailwind import in `src/styles.css` with your own styles
-3. Remove `tailwindcss()` from the plugins array in `vite.config.ts`
-4. Uninstall the packages: `npm install @tailwindcss/vite tailwindcss -D`
+1. Go to your Supabase project dashboard
+2. Navigate to **SQL Editor**
+3. Run the migration files in order:
+   - `supabase/migrations/001_initial_schema.sql` (creates tables and RLS policies)
+   - `supabase/migrations/002_seed_default_block_types.sql` (creates helper function for default block types)
+4. (Optional) Enable the `uuid-ossp` extension if not already enabled:
 
-## Linting & Formatting
+   ```sql
+   create extension if not exists "uuid-ossp";
+   ```
 
-
-This project uses [eslint](https://eslint.org/) and [prettier](https://prettier.io/) for linting and formatting. Eslint is configured using [tanstack/eslint-config](https://tanstack.com/config/latest/docs/eslint). The following scripts are available:
+### 5. Start Development Server
 
 ```bash
-npm run lint
-npm run format
-npm run check
+pnpm dev
 ```
 
+This starts the Vite dev server on [http://localhost:3000](http://localhost:3000) with:
 
-## Setting up Clerk
+- Hot Module Replacement (HMR) for instant UI updates
+- TanStack Start server functions running locally
+- Clerk authentication working in development mode
 
-- Set the `VITE_CLERK_PUBLISHABLE_KEY` in your `.env.local`.
+### 6. Verify Setup
 
+1. Open [http://localhost:3000](http://localhost:3000) in your browser
+2. Click "Start Planning" to go to the dashboard
+3. Sign in with Clerk (test mode allows fake email sign-in)
+4. You should see the calendar UI with default block types (Deep Work, Meetings, Admin, Exercise, Breaks)
 
+---
 
-## Routing
+## Environment Variables
 
-This project uses [TanStack Router](https://tanstack.com/router) with file-based routing. Routes are managed as files in `src/routes`.
+### Required
 
-### Adding A Route
+| Variable                     | Description                         | How to Get                                  |
+| ---------------------------- | ----------------------------------- | ------------------------------------------- |
+| `VITE_CLERK_PUBLISHABLE_KEY` | Clerk publishable key               | Clerk Dashboard → API Keys                  |
+| `CLERK_SECRET_KEY`           | Clerk secret key (server-side only) | Clerk Dashboard → API Keys                  |
+| `VITE_SUPABASE_URL`          | Supabase project URL                | Supabase Dashboard → Project Settings → API |
+| `VITE_SUPABASE_KEY`          | Supabase anon/public key            | Supabase Dashboard → Project Settings → API |
 
-To add a new route to your application just add a new file in the `./src/routes` directory.
+### Clerk-Specific
 
-TanStack will automatically generate the content of the route file for you.
+| Variable                 | Description          | Default    |
+| ------------------------ | -------------------- | ---------- |
+| `VITE_CLERK_SIGN_IN_URL` | URL for sign-in page | `/sign-in` |
+| `VITE_CLERK_SIGN_UP_URL` | URL for sign-up page | `/sign-up` |
 
-Now that you have two routes you can use a `Link` component to navigate between them.
+---
 
-### Adding Links
+## Contributing
 
-To use SPA (Single Page Application) navigation you will need to import the `Link` component from `@tanstack/react-router`.
+We welcome contributions! Here's how to get started:
 
-```tsx
-import { Link } from "@tanstack/react-router";
-```
+1. **Fork the repository** to your GitHub account
+2. **Create a feature branch**:
 
-Then anywhere in your JSX you can use it like so:
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
 
-```tsx
-<Link to="/about">About</Link>
-```
+3. **Make your changes** and commit using conventional commits:
 
-This will create a link that will navigate to the `/about` route.
+   ```bash
+   git commit -m "feat: add monthly calendar view"
+   ```
 
-More information on the `Link` component can be found in the [Link documentation](https://tanstack.com/router/v1/docs/framework/react/api/router/linkComponent).
+4. **Run checks** before pushing:
 
-### Using A Layout
+   ```bash
+   pnpm check  # Format and lint
+   pnpm test   # Run tests
+   pnpm build  # Verify production build
+   ```
 
-In the File Based Routing setup the layout is located in `src/routes/__root.tsx`. Anything you add to the root route will appear in all the routes. The route content will appear in the JSX where you render `{children}` in the `shellComponent`.
+5. **Push to your fork** and open a Pull Request
+6. Use the PR template to describe your changes
 
-Here is an example layout that includes a header:
+### Issue Reporting
 
-```tsx
-import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
+Use the provided GitHub issue templates:
 
-export const Route = createRootRoute({
-  head: () => ({
-    meta: [
-      { charSet: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { title: 'My App' },
-    ],
-  }),
-  shellComponent: ({ children }) => (
-    <html lang="en">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        <header>
-          <nav>
-            <Link to="/">Home</Link>
-            <Link to="/about">About</Link>
-          </nav>
-        </header>
-        {children}
-        <Scripts />
-      </body>
-    </html>
-  ),
-})
-```
-
-More information on layouts can be found in the [Layouts documentation](https://tanstack.com/router/latest/docs/framework/react/guide/routing-concepts#layouts).
-
-## Server Functions
-
-TanStack Start provides server functions that allow you to write server-side code that seamlessly integrates with your client components.
-
-```tsx
-import { createServerFn } from '@tanstack/react-start'
-
-const getServerTime = createServerFn({
-  method: 'GET',
-}).handler(async () => {
-  return new Date().toISOString()
-})
-
-// Use in a component
-function MyComponent() {
-  const [time, setTime] = useState('')
-  
-  useEffect(() => {
-    getServerTime().then(setTime)
-  }, [])
-  
-  return <div>Server time: {time}</div>
-}
-```
-
-## API Routes
-
-You can create API routes by using the `server` property in your route definitions:
-
-```tsx
-import { createFileRoute } from '@tanstack/react-router'
-import { json } from '@tanstack/react-start'
-
-export const Route = createFileRoute('/api/hello')({
-  server: {
-    handlers: {
-      GET: () => json({ message: 'Hello, World!' }),
-    },
-  },
-})
-```
-
-## Data Fetching
-
-There are multiple ways to fetch data in your application. You can use TanStack Query to fetch data from a server. But you can also use the `loader` functionality built into TanStack Router to load the data for a route before it's rendered.
-
-For example:
-
-```tsx
-import { createFileRoute } from '@tanstack/react-router'
-
-export const Route = createFileRoute('/people')({
-  loader: async () => {
-    const response = await fetch('https://swapi.dev/api/people')
-    return response.json()
-  },
-  component: PeopleComponent,
-})
-
-function PeopleComponent() {
-  const data = Route.useLoaderData()
-  return (
-    <ul>
-      {data.results.map((person) => (
-        <li key={person.name}>{person.name}</li>
-      ))}
-    </ul>
-  )
-}
-```
-
-Loaders simplify your data fetching logic dramatically. Check out more information in the [Loader documentation](https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#loader-parameters).
-
-# Demo files
-
-Files prefixed with `demo` can be safely deleted. They are there to provide a starting point for you to play around with the features you've installed.
-
-# Learn More
-
-You can learn more about all of the offerings from TanStack in the [TanStack documentation](https://tanstack.com).
-
-For TanStack Start specific documentation, visit [TanStack Start](https://tanstack.com/start).
+- **Bug Report**: For reporting bugs
+- **Feature Request**: For suggesting new features
+- **Documentation**: For improving docs

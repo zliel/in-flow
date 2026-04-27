@@ -14,7 +14,7 @@ interface BackgroundGridProps {
 }
 
 const HOURS = Array.from({ length: 24 }, (_, i) => i)
-const DEFAULT_HOUR_HEIGHT = 60
+const DEFAULT_HOUR_HEIGHT = 80
 
 export default function BackgroundGrid({
   days,

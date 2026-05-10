@@ -13,6 +13,7 @@ import {
 } from '#/components/ui/popover'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { CalendarIcon } from '@hugeicons/core-free-icons'
+import { motion } from 'framer-motion'
 
 interface DateTimePickerProps {
   value: string
@@ -60,6 +61,8 @@ export function DateTimePicker({
     setOpen(isOpen)
   }
 
+  const hasValue = Boolean(value)
+
   const displayValue = React.useMemo(() => {
     const date = new Date(value)
     return format(date, "MMM d, yyyy 'at' h:mm a")
@@ -78,59 +81,121 @@ export function DateTimePicker({
             id={id}
             variant="outline"
             className={cn(
-              'w-full justify-start font-normal hover:bg-input/50 hover:border-input',
-              !value && 'text-muted-foreground',
+              'w-full justify-start gap-2 font-normal transition-all duration-180 ease-[cubic-bezier(0.16,1,0.3,1)]',
+              hasValue
+                ? 'border-primary/25 bg-primary/[0.04] text-foreground hover:bg-primary/[0.08] hover:border-primary/35'
+                : 'text-muted-foreground hover:bg-input/50 hover:border-input',
             )}
           >
             <HugeiconsIcon
               icon={CalendarIcon}
               strokeWidth={2}
-              className="mr-1 size-4 text-muted-foreground"
+              className={cn(
+                'size-4 transition-colors duration-180',
+                hasValue ? 'text-primary' : 'text-muted-foreground',
+              )}
             />
-            {displayValue}
+            <span className={cn(hasValue && 'font-medium')}>
+              {displayValue}
+            </span>
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="start">
-          <div className="flex flex-col gap-3 p-3">
-            <Calendar
-              mode="single"
-              selected={selectedDate}
-              onSelect={handleDateSelect}
-              className="rounded-xl"
-            />
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-1">
-                <select
-                  value={hours}
-                  onChange={(e) => setHoursValue(Number(e.target.value))}
-                  className="rounded-lg border border-input bg-input/30 px-2 py-1.5 text-sm transition-colors outline-none focus:border-ring focus:ring-[3px] focus:ring-ring/50"
-                >
-                  {Array.from({ length: 24 }, (_, i) => (
-                    <option key={i} value={i}>
-                      {i.toString().padStart(2, '0')}
-                    </option>
-                  ))}
-                </select>
-                <span className="text-muted-foreground">:</span>
-                <select
-                  value={minutes}
-                  onChange={(e) => setMinutesValue(Number(e.target.value))}
-                  className="rounded-lg border border-input bg-input/30 px-2 py-1.5 text-sm transition-colors outline-none focus:border-ring focus:ring-[3px] focus:ring-ring/50"
-                >
-                  {Array.from({ length: 60 }, (_, i) => (
-                    <option key={i} value={i}>
-                      {i.toString().padStart(2, '0')}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <Button size="sm" className="ml-auto" onClick={handleTimeChange}>
-                Confirm
-              </Button>
+        <PopoverContent
+          className="w-auto overflow-hidden rounded-2xl p-0"
+          align="start"
+        >
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <div className="flex flex-col gap-4 p-3">
+              <Calendar
+                mode="single"
+                selected={selectedDate}
+                onSelect={handleDateSelect}
+                className="rounded-xl"
+              />
+              <motion.div
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  delay: 0.06,
+                  duration: 0.2,
+                  ease: [0.16, 1, 0.3, 1],
+                }}
+                className="flex flex-col gap-3"
+              >
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1">
+                    <TimeSelect
+                      value={hours}
+                      onChange={setHoursValue}
+                      options={Array.from({ length: 24 }, (_, i) => ({
+                        value: i,
+                        label: i.toString().padStart(2, '0'),
+                      }))}
+                    />
+                    <span className="font-medium text-muted-foreground">:</span>
+                    <TimeSelect
+                      value={minutes}
+                      onChange={setMinutesValue}
+                      options={Array.from({ length: 60 }, (_, i) => ({
+                        value: i,
+                        label: i.toString().padStart(2, '0'),
+                      }))}
+                    />
+                  </div>
+                </div>
+                <Button className="w-full" onClick={handleTimeChange}>
+                  Confirm
+                </Button>
+              </motion.div>
             </div>
-          </div>
+          </motion.div>
         </PopoverContent>
       </Popover>
+    </div>
+  )
+}
+
+/**
+ * A visually polished native <select> styled to match the shadcn SelectTrigger
+ * aesthetic — with rounded corners, focus ring, and a dropdown chevron.
+ */
+function TimeSelect({
+  value,
+  onChange,
+  options,
+}: {
+  value: number
+  onChange: (v: number) => void
+  options: { value: number; label: string }[]
+}) {
+  return (
+    <div className="relative rounded-xl border border-input bg-input/30 transition-all duration-180 ease-[cubic-bezier(0.16,1,0.3,1)] focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/50">
+      <select
+        value={value}
+        onChange={(e) => onChange(Number(e.target.value))}
+        className="appearance-none bg-transparent px-3 py-1.5 pr-7 text-sm outline-none"
+      >
+        {options.map((opt) => (
+          <option key={opt.value} value={opt.value}>
+            {opt.label}
+          </option>
+        ))}
+      </select>
+      <svg
+        className="pointer-events-none absolute right-2 top-1/2 size-3 -translate-y-1/2 text-muted-foreground"
+        viewBox="0 0 16 16"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M4 6l4 4 4-4" />
+      </svg>
     </div>
   )
 }

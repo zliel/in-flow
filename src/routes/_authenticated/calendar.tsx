@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import CalendarHeader from '#/components/calendar/CalendarHeader'
@@ -5,6 +6,7 @@ import DayGrid from '#/components/calendar/DayGrid'
 import WeekGrid from '#/components/calendar/WeeklyGrid'
 import MonthGrid from '#/components/calendar/MonthGrid'
 import AddEventDialog from '#/components/calendar/AddEventDialog'
+import ManageBlockTypesDialog from '#/components/calendar/ManageBlockTypesDialog'
 import { CalendarProvider, useCalendar } from '#/components/calendar/CalendarContext'
 import { getBlocksAndBlockTypes } from '@/utils/server-blocks'
 
@@ -29,18 +31,24 @@ function RouteComponent() {
     queryKey: ['blocks'],
     queryFn: async () => await getBlocksAndBlockTypes(),
   })
+  const [isManageTypesOpen, setIsManageTypesOpen] = useState(false)
 
   const blockTypes = data?.blockTypes ?? []
 
   return (
     <CalendarProvider>
       <main className="overflow-x-hidden w-full max-w-full flex flex-col">
-        <CalendarHeader />
+        <CalendarHeader onManageTypesClick={() => setIsManageTypesOpen(true)} />
         <div className="calendar-content flex-1 overflow-auto">
           <CalendarView />
         </div>
       </main>
-      <AddEventDialog blockTypes={blockTypes} />
+      <AddEventDialog blockTypes={blockTypes} onAddBlockType={() => setIsManageTypesOpen(true)} />
+      <ManageBlockTypesDialog
+        open={isManageTypesOpen}
+        onOpenChange={setIsManageTypesOpen}
+        blockTypes={blockTypes}
+      />
     </CalendarProvider>
   )
 }

@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
 import { format } from 'date-fns'
+import { Plus } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -17,19 +18,21 @@ import {
   Select,
   SelectContent,
   SelectItem,
+  SelectSeparator,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
 import { DateTimePicker } from '@/components/ui/date-time-picker'
 import { useCalendar } from './CalendarContext'
 import { createBlock, updateBlock, deleteBlock } from '@/utils/server-blocks'
-import type { BlockType } from '@/types'
+import type { BlockType, Block } from '@/types'
 
 interface AddEventDialogProps {
   blockTypes: BlockType[]
+  onAddBlockType?: () => void
 }
 
-export default function AddEventDialog({ blockTypes }: AddEventDialogProps) {
+export default function AddEventDialog({ blockTypes, onAddBlockType = () => {} }: AddEventDialogProps) {
   const {
     isAddEventOpen,
     setIsAddEventOpen,
@@ -103,9 +106,44 @@ export default function AddEventDialog({ blockTypes }: AddEventDialogProps) {
         },
       })
     },
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: ['blocks'] })
+      const previous = queryClient.getQueryData<{
+        blockTypes: BlockType[]
+        blocks: Block[]
+      }>(['blocks'])
+
+      const optimisticBlock: Block = {
+        id: `temp-${Date.now()}`,
+        user_id: '',
+        block_type_id: blockTypeId || null,
+        title: title || null,
+        start_time: toUTC(startTime),
+        end_time: toUTC(endTime),
+        is_recurring: false,
+        created_at: new Date().toISOString(),
+      }
+
+      queryClient.setQueryData<{
+        blockTypes: BlockType[]
+        blocks: Block[]
+      }>(['blocks'], {
+        blockTypes: previous?.blockTypes ?? [],
+        blocks: [...(previous?.blocks ?? []), optimisticBlock],
+      })
+
+      return { previous }
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(['blocks'], context.previous)
+      }
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['blocks'] })
       handleClose()
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['blocks'] })
     },
   })
 
@@ -122,9 +160,46 @@ export default function AddEventDialog({ blockTypes }: AddEventDialogProps) {
         },
       })
     },
+    onMutate: async () => {
+      if (!selectedBlock) return {}
+      await queryClient.cancelQueries({ queryKey: ['blocks'] })
+      const previous = queryClient.getQueryData<{
+        blockTypes: BlockType[]
+        blocks: Block[]
+      }>(['blocks'])
+
+      if (previous) {
+        queryClient.setQueryData<{
+          blockTypes: BlockType[]
+          blocks: Block[]
+        }>(['blocks'], {
+          ...previous,
+          blocks: previous.blocks.map((block) =>
+            block.id === selectedBlock.id
+              ? {
+                  ...block,
+                  block_type_id: blockTypeId || null,
+                  title: title || null,
+                  start_time: toUTC(startTime),
+                  end_time: toUTC(endTime),
+                }
+              : block,
+          ),
+        })
+      }
+
+      return { previous }
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(['blocks'], context.previous)
+      }
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['blocks'] })
       handleClose()
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['blocks'] })
     },
   })
 
@@ -133,9 +208,38 @@ export default function AddEventDialog({ blockTypes }: AddEventDialogProps) {
       if (!selectedBlock) return null
       return await deleteBlockFn({ data: { blockId: selectedBlock.id } })
     },
+    onMutate: async () => {
+      if (!selectedBlock) return {}
+      await queryClient.cancelQueries({ queryKey: ['blocks'] })
+      const previous = queryClient.getQueryData<{
+        blockTypes: BlockType[]
+        blocks: Block[]
+      }>(['blocks'])
+
+      if (previous) {
+        queryClient.setQueryData<{
+          blockTypes: BlockType[]
+          blocks: Block[]
+        }>(['blocks'], {
+          ...previous,
+          blocks: previous.blocks.filter(
+            (block) => block.id !== selectedBlock.id,
+          ),
+        })
+      }
+
+      return { previous }
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(['blocks'], context.previous)
+      }
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['blocks'] })
       handleClose()
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['blocks'] })
     },
   })
 
@@ -188,6 +292,15 @@ export default function AddEventDialog({ blockTypes }: AddEventDialogProps) {
     setError('Please fill in all required fields')
   }
 
+  const handleBlockTypeChange = (value: string) => {
+    if (value === 'add-new-block-type') {
+      onAddBlockType()
+      // Don't change the selected value — keep the previous one
+      return
+    }
+    setBlockTypeId(value)
+  }
+
   return (
     <Dialog open={isAddEventOpen} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-lg max-w-[calc(100%-2rem)]">
@@ -228,11 +341,21 @@ export default function AddEventDialog({ blockTypes }: AddEventDialogProps) {
             <label htmlFor="blockType" className="text-sm font-medium">
               Type
             </label>
-            <Select value={blockTypeId} required onValueChange={setBlockTypeId}>
+            <Select value={blockTypeId} required onValueChange={handleBlockTypeChange}>
               <SelectTrigger>
                 <SelectValue placeholder="Select event type" />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem
+                  value="add-new-block-type"
+                  className="text-primary font-medium"
+                >
+                  <div className="flex items-center gap-2">
+                    <Plus className="size-4" />
+                    <span>Add new block type...</span>
+                  </div>
+                </SelectItem>
+                <SelectSeparator />
                 {blockTypes.map((bt) => (
                   <SelectItem key={bt.id} value={bt.id}>
                     <div className="flex items-center gap-2">

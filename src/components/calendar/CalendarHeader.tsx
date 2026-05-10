@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router'
-import { ChevronLeft, ChevronRight, Plus, CalendarDays } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Plus, CalendarDays, Settings2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   startOfWeek,
@@ -18,7 +18,11 @@ import {
 } from 'date-fns'
 import { useCalendar } from './CalendarContext'
 
-export default function CalendarHeader() {
+export default function CalendarHeader({
+  onManageTypesClick,
+}: {
+  onManageTypesClick?: () => void
+}) {
   const {
     currentDate,
     setCurrentDate,
@@ -145,6 +149,15 @@ export default function CalendarHeader() {
             <span className="hidden sm:inline">Month</span>
           </button>
         </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="gap-1.5 h-8 px-2 sm:gap-1.5 sm:h-9 sm:px-3"
+          onClick={onManageTypesClick}
+        >
+          <Settings2 className="h-4 w-4 sm:h-4 sm:w-4" />
+          <span className="hidden sm:inline">Types</span>
+        </Button>
         <Button
           size="sm"
           className="gap-1.5 h-8 px-3 sm:gap-2 sm:h-9 sm:px-4"

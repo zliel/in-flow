@@ -62,6 +62,62 @@ export const createBlock = createServerFn()
     return block
   })
 
+export const createBlockType = createServerFn()
+  .inputValidator(
+    z.object({
+      name: z.string().min(1, 'Name is required'),
+      color: z.string().min(1, 'Color is required'),
+      defaultEnergyRequired: z.number().min(1).max(5),
+    }),
+  )
+  .handler(async ({ data }) => {
+    const supabase = await createServerSupabase()
+    const { userId } = await auth()
+
+    const { data: blockType, error } = await supabase
+      .from('block_types')
+      .insert({
+        user_id: userId,
+        name: data.name,
+        color: data.color,
+        default_energy_required: data.defaultEnergyRequired,
+      })
+      .select()
+      .single()
+
+    if (error) throw new Error(error.message)
+    return blockType
+  })
+
+export const updateBlockType = createServerFn()
+  .inputValidator(
+    z.object({
+      blockTypeId: z.string(),
+      name: z.string().min(1).optional(),
+      color: z.string().min(1).optional(),
+      defaultEnergyRequired: z.number().min(1).max(5).optional(),
+    }),
+  )
+  .handler(async ({ data }) => {
+    const supabase = await createServerSupabase()
+
+    const updateData: Record<string, unknown> = {}
+    if (data.name !== undefined) updateData.name = data.name
+    if (data.color !== undefined) updateData.color = data.color
+    if (data.defaultEnergyRequired !== undefined)
+      updateData.default_energy_required = data.defaultEnergyRequired
+
+    const { data: blockType, error } = await supabase
+      .from('block_types')
+      .update(updateData)
+      .eq('id', data.blockTypeId)
+      .select()
+      .single()
+
+    if (error) throw new Error(error.message)
+    return blockType
+  })
+
 export const deleteBlock = createServerFn()
   .inputValidator(z.object({ blockId: z.string() }))
   .handler(async ({ data }) => {

@@ -30,16 +30,20 @@ export default function CalendarHeader() {
   const navigatePrev = () => {
     if (viewMode === 'month') {
       setCurrentDate(subMonths(currentDate, 1))
-    } else {
+    } else if (viewMode === 'week') {
       setCurrentDate(subWeeks(currentDate, 1))
+    } else {
+      setCurrentDate(addDays(currentDate, -1))
     }
   }
 
   const navigateNext = () => {
     if (viewMode === 'month') {
       setCurrentDate(addMonths(currentDate, 1))
-    } else {
+    } else if (viewMode === 'week') {
       setCurrentDate(addWeeks(currentDate, 1))
+    } else {
+      setCurrentDate(addDays(currentDate, 1))
     }
   }
 
@@ -50,6 +54,8 @@ export default function CalendarHeader() {
   const getTitle = () => {
     if (viewMode === 'month') {
       return format(currentDate, 'MMMM yyyy')
+    } else if (viewMode === 'day') {
+      return format(currentDate, 'EEEE, MMMM d, yyyy')
     }
     const start = startOfWeek(currentDate, { weekStartsOn: 0 })
     const end = endOfWeek(currentDate, { weekStartsOn: 0 })

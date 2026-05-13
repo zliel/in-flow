@@ -1,5 +1,11 @@
 import { Link } from '@tanstack/react-router'
-import { ChevronLeft, ChevronRight, Plus, CalendarDays, Settings2 } from 'lucide-react'
+import {
+  ChevronLeft,
+  ChevronRight,
+  Plus,
+  CalendarDays,
+  Settings2,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   startOfWeek,

@@ -2,17 +2,15 @@
  * Parse a hex color string to RGB values.
  * Handles #RGB, #RRGGBB, #RGBA, #RRGGBBAA formats.
  */
-function hexToRgb(
-  hex: string,
-): { r: number; g: number; b: number } | null {
+function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
   const clean = hex.replace('#', '')
 
   // #RGB → #RRGGBB
   if (clean.length === 3) {
     return {
-      r: parseInt(clean[0]! + clean[0], 16),
-      g: parseInt(clean[1]! + clean[1], 16),
-      b: parseInt(clean[2]! + clean[2], 16),
+      r: parseInt(clean[0] + clean[0], 16),
+      g: parseInt(clean[1] + clean[1], 16),
+      b: parseInt(clean[2] + clean[2], 16),
     }
   }
 

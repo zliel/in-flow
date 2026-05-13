@@ -42,7 +42,10 @@ interface AddEventDialogProps {
   onAddBlockType?: () => void
 }
 
-export default function AddEventDialog({ blockTypes, onAddBlockType = () => {} }: AddEventDialogProps) {
+export default function AddEventDialog({
+  blockTypes,
+  onAddBlockType = () => {},
+}: AddEventDialogProps) {
   const {
     isAddEventOpen,
     setIsAddEventOpen,
@@ -52,7 +55,8 @@ export default function AddEventDialog({ blockTypes, onAddBlockType = () => {} }
   } = useCalendar()
   const queryClient = useQueryClient()
   const isEditMode = !!selectedBlock
-  const isRecurringInstance = selectedBlock?.recurrence_group_id != null && !selectedBlock.is_recurring
+  const isRecurringInstance =
+    selectedBlock?.recurrence_group_id != null && !selectedBlock.is_recurring
 
   const [title, setTitle] = useState('')
   const [blockTypeId, setBlockTypeId] = useState<string>('')
@@ -69,12 +73,16 @@ export default function AddEventDialog({ blockTypes, onAddBlockType = () => {} }
   })
 
   const [isRecurring, setIsRecurring] = useState(false)
-  const [recurrenceFrequency, setRecurrenceFrequency] = useState<'daily' | 'weekdays' | 'weekly' | 'monthly'>('weekly')
+  const [recurrenceFrequency, setRecurrenceFrequency] = useState<
+    'daily' | 'weekdays' | 'weekly' | 'monthly'
+  >('weekly')
   const [recurrenceDays, setRecurrenceDays] = useState<number[]>(() => {
     const dayOfWeek = getDay(new Date(currentDate))
     return [dayOfWeek]
   })
-  const [recurrenceEndType, setRecurrenceEndType] = useState<'never' | 'after' | 'on'>('never')
+  const [recurrenceEndType, setRecurrenceEndType] = useState<
+    'never' | 'after' | 'on'
+  >('never')
   const [recurrenceEndCount, setRecurrenceEndCount] = useState(10)
   const [recurrenceEndDate, setRecurrenceEndDate] = useState('')
 
@@ -86,7 +94,9 @@ export default function AddEventDialog({ blockTypes, onAddBlockType = () => {} }
   const createRecurringBlockFn = useServerFn(createRecurringBlock)
   const deleteRecurrenceGroupFn = useServerFn(deleteRecurrenceGroup)
   const updateRecurrenceGroupFn = useServerFn(updateRecurrenceGroup)
-  const deleteSingleRecurringInstanceFn = useServerFn(deleteSingleRecurringInstance)
+  const deleteSingleRecurringInstanceFn = useServerFn(
+    deleteSingleRecurringInstance,
+  )
 
   useEffect(() => {
     if (selectedBlock && isAddEventOpen) {
@@ -100,8 +110,12 @@ export default function AddEventDialog({ blockTypes, onAddBlockType = () => {} }
       if (selectedBlock.is_recurring && selectedBlock.recurrence_pattern) {
         setIsRecurring(true)
         setRecurrenceFrequency(selectedBlock.recurrence_pattern.frequency)
-        setRecurrenceDays(selectedBlock.recurrence_pattern.days || [getDay(start)])
-        setRecurrenceEndType(selectedBlock.recurrence_pattern.endType || 'never')
+        setRecurrenceDays(
+          selectedBlock.recurrence_pattern.days || [getDay(start)],
+        )
+        setRecurrenceEndType(
+          selectedBlock.recurrence_pattern.endType || 'never',
+        )
         setRecurrenceEndCount(selectedBlock.recurrence_pattern.endCount || 10)
         setRecurrenceEndDate(selectedBlock.recurrence_pattern.endDate || '')
       } else {
@@ -158,7 +172,9 @@ export default function AddEventDialog({ blockTypes, onAddBlockType = () => {} }
 
   const toggleDay = (day: number) => {
     setRecurrenceDays((prev) =>
-      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day].sort(),
+      prev.includes(day)
+        ? prev.filter((d) => d !== day)
+        : [...prev, day].sort(),
     )
   }
 
@@ -244,7 +260,10 @@ export default function AddEventDialog({ blockTypes, onAddBlockType = () => {} }
     },
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ['blocks'] })
-      const previous = queryClient.getQueryData<{ blockTypes: BlockType[]; blocks: Block[] }>(['blocks'])
+      const previous = queryClient.getQueryData<{
+        blockTypes: BlockType[]
+        blocks: Block[]
+      }>(['blocks'])
       const optimisticBlock: Block = {
         id: `temp-${Date.now()}`,
         user_id: '',
@@ -257,14 +276,18 @@ export default function AddEventDialog({ blockTypes, onAddBlockType = () => {} }
         recurrence_group_id: null,
         created_at: new Date().toISOString(),
       }
-      queryClient.setQueryData<{ blockTypes: BlockType[]; blocks: Block[] }>(['blocks'], {
-        blockTypes: previous?.blockTypes ?? [],
-        blocks: [...(previous?.blocks ?? []), optimisticBlock],
-      })
+      queryClient.setQueryData<{ blockTypes: BlockType[]; blocks: Block[] }>(
+        ['blocks'],
+        {
+          blockTypes: previous?.blockTypes ?? [],
+          blocks: [...(previous?.blocks ?? []), optimisticBlock],
+        },
+      )
       return { previous }
     },
     onError: (_err, _vars, context) => {
-      if (context?.previous) queryClient.setQueryData(['blocks'], context.previous)
+      if (context?.previous)
+        queryClient.setQueryData(['blocks'], context.previous)
     },
     onSuccess: () => handleClose(),
     onSettled: () => queryClient.invalidateQueries({ queryKey: ['blocks'] }),
@@ -284,11 +307,15 @@ export default function AddEventDialog({ blockTypes, onAddBlockType = () => {} }
     },
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ['blocks'] })
-      const previous = queryClient.getQueryData<{ blockTypes: BlockType[]; blocks: Block[] }>(['blocks'])
+      const previous = queryClient.getQueryData<{
+        blockTypes: BlockType[]
+        blocks: Block[]
+      }>(['blocks'])
       return { previous }
     },
     onError: (_err, _vars, context) => {
-      if (context?.previous) queryClient.setQueryData(['blocks'], context.previous)
+      if (context?.previous)
+        queryClient.setQueryData(['blocks'], context.previous)
     },
     onSuccess: () => handleClose(),
     onSettled: () => queryClient.invalidateQueries({ queryKey: ['blocks'] }),
@@ -310,27 +337,34 @@ export default function AddEventDialog({ blockTypes, onAddBlockType = () => {} }
     onMutate: async () => {
       if (!selectedBlock) return {}
       await queryClient.cancelQueries({ queryKey: ['blocks'] })
-      const previous = queryClient.getQueryData<{ blockTypes: BlockType[]; blocks: Block[] }>(['blocks'])
+      const previous = queryClient.getQueryData<{
+        blockTypes: BlockType[]
+        blocks: Block[]
+      }>(['blocks'])
       if (previous) {
-        queryClient.setQueryData<{ blockTypes: BlockType[]; blocks: Block[] }>(['blocks'], {
-          ...previous,
-          blocks: previous.blocks.map((block) =>
-            block.id === selectedBlock.id
-              ? {
-                  ...block,
-                  block_type_id: blockTypeId || null,
-                  title: title || null,
-                  start_time: toUTC(startTime),
-                  end_time: toUTC(endTime),
-                }
-              : block,
-          ),
-        })
+        queryClient.setQueryData<{ blockTypes: BlockType[]; blocks: Block[] }>(
+          ['blocks'],
+          {
+            ...previous,
+            blocks: previous.blocks.map((block) =>
+              block.id === selectedBlock.id
+                ? {
+                    ...block,
+                    block_type_id: blockTypeId || null,
+                    title: title || null,
+                    start_time: toUTC(startTime),
+                    end_time: toUTC(endTime),
+                  }
+                : block,
+            ),
+          },
+        )
       }
       return { previous }
     },
     onError: (_err, _vars, context) => {
-      if (context?.previous) queryClient.setQueryData(['blocks'], context.previous)
+      if (context?.previous)
+        queryClient.setQueryData(['blocks'], context.previous)
     },
     onSuccess: () => handleClose(),
     onSettled: () => queryClient.invalidateQueries({ queryKey: ['blocks'] }),
@@ -352,11 +386,15 @@ export default function AddEventDialog({ blockTypes, onAddBlockType = () => {} }
     },
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ['blocks'] })
-      const previous = queryClient.getQueryData<{ blockTypes: BlockType[]; blocks: Block[] }>(['blocks'])
+      const previous = queryClient.getQueryData<{
+        blockTypes: BlockType[]
+        blocks: Block[]
+      }>(['blocks'])
       return { previous }
     },
     onError: (_err, _vars, context) => {
-      if (context?.previous) queryClient.setQueryData(['blocks'], context.previous)
+      if (context?.previous)
+        queryClient.setQueryData(['blocks'], context.previous)
     },
     onSuccess: () => handleClose(),
     onSettled: () => queryClient.invalidateQueries({ queryKey: ['blocks'] }),
@@ -365,17 +403,28 @@ export default function AddEventDialog({ blockTypes, onAddBlockType = () => {} }
   const deleteMutation = useMutation({
     mutationFn: async () => {
       if (!selectedBlock) return null
-      if (isRecurringInstance && editScope === 'all' && selectedBlock.recurrence_group_id) {
-        return await deleteRecurrenceGroupFn({ data: { recurrenceGroupId: selectedBlock.recurrence_group_id } })
+      if (
+        isRecurringInstance &&
+        editScope === 'all' &&
+        selectedBlock.recurrence_group_id
+      ) {
+        return await deleteRecurrenceGroupFn({
+          data: { recurrenceGroupId: selectedBlock.recurrence_group_id },
+        })
       } else if (isRecurringInstance) {
-        return await deleteSingleRecurringInstanceFn({ data: { blockId: selectedBlock.id } })
+        return await deleteSingleRecurringInstanceFn({
+          data: { blockId: selectedBlock.id },
+        })
       }
       return await deleteBlockFn({ data: { blockId: selectedBlock.id } })
     },
     onMutate: async () => {
       if (!selectedBlock) return {}
       await queryClient.cancelQueries({ queryKey: ['blocks'] })
-      const previous = queryClient.getQueryData<{ blockTypes: BlockType[]; blocks: Block[] }>(['blocks'])
+      const previous = queryClient.getQueryData<{
+        blockTypes: BlockType[]
+        blocks: Block[]
+      }>(['blocks'])
       if (previous) {
         let updatedBlocks = previous.blocks
         if (isRecurringInstance && editScope === 'all') {
@@ -385,15 +434,19 @@ export default function AddEventDialog({ blockTypes, onAddBlockType = () => {} }
         } else {
           updatedBlocks = updatedBlocks.filter((b) => b.id !== selectedBlock.id)
         }
-        queryClient.setQueryData<{ blockTypes: BlockType[]; blocks: Block[] }>(['blocks'], {
-          ...previous,
-          blocks: updatedBlocks,
-        })
+        queryClient.setQueryData<{ blockTypes: BlockType[]; blocks: Block[] }>(
+          ['blocks'],
+          {
+            ...previous,
+            blocks: updatedBlocks,
+          },
+        )
       }
       return { previous }
     },
     onError: (_err, _vars, context) => {
-      if (context?.previous) queryClient.setQueryData(['blocks'], context.previous)
+      if (context?.previous)
+        queryClient.setQueryData(['blocks'], context.previous)
     },
     onSuccess: () => handleClose(),
     onSettled: () => queryClient.invalidateQueries({ queryKey: ['blocks'] }),
@@ -466,7 +519,11 @@ export default function AddEventDialog({ blockTypes, onAddBlockType = () => {} }
             <label htmlFor="blockType" className="text-sm font-medium">
               Type
             </label>
-            <Select value={blockTypeId} required onValueChange={handleBlockTypeChange}>
+            <Select
+              value={blockTypeId}
+              required
+              onValueChange={handleBlockTypeChange}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Select event type" />
               </SelectTrigger>
@@ -539,7 +596,9 @@ export default function AddEventDialog({ blockTypes, onAddBlockType = () => {} }
                     </label>
                     <Select
                       value={recurrenceFrequency}
-                      onValueChange={(v) => setRecurrenceFrequency(v as typeof recurrenceFrequency)}
+                      onValueChange={(v) =>
+                        setRecurrenceFrequency(v as typeof recurrenceFrequency)
+                      }
                     >
                       <SelectTrigger>
                         <SelectValue />
@@ -583,14 +642,18 @@ export default function AddEventDialog({ blockTypes, onAddBlockType = () => {} }
                     </label>
                     <Select
                       value={recurrenceEndType}
-                      onValueChange={(v) => setRecurrenceEndType(v as typeof recurrenceEndType)}
+                      onValueChange={(v) =>
+                        setRecurrenceEndType(v as typeof recurrenceEndType)
+                      }
                     >
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="never">Never</SelectItem>
-                        <SelectItem value="after">After N occurrences</SelectItem>
+                        <SelectItem value="after">
+                          After N occurrences
+                        </SelectItem>
                         <SelectItem value="on">On date</SelectItem>
                       </SelectContent>
                     </Select>
@@ -606,7 +669,9 @@ export default function AddEventDialog({ blockTypes, onAddBlockType = () => {} }
                         min={1}
                         max={30}
                         value={recurrenceEndCount}
-                        onChange={(e) => setRecurrenceEndCount(Number(e.target.value))}
+                        onChange={(e) =>
+                          setRecurrenceEndCount(Number(e.target.value))
+                        }
                       />
                     </div>
                   )}
@@ -651,7 +716,8 @@ export default function AddEventDialog({ blockTypes, onAddBlockType = () => {} }
                 updateAllMutation.isPending
               }
             >
-              {createBlockMutation.isPending || createRecurringMutation.isPending
+              {createBlockMutation.isPending ||
+              createRecurringMutation.isPending
                 ? 'Creating...'
                 : updateBlockMutation.isPending || updateAllMutation.isPending
                   ? 'Saving...'

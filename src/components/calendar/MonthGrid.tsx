@@ -22,14 +22,24 @@ export default function MonthGrid() {
   const blockTypes = data?.blockTypes ?? []
   const blocks = data?.blocks ?? []
 
-  const monthStart = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1)
-  const monthEnd = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0)
+  const monthStart = new Date(
+    currentDate.getFullYear(),
+    currentDate.getMonth(),
+    1,
+  )
+  const monthEnd = new Date(
+    currentDate.getFullYear(),
+    currentDate.getMonth() + 1,
+    0,
+  )
 
   const filteredBlocks = useMemo(() => {
     return blocks.filter((b) => {
       if (b.is_recurring) return false
       const blockDate = new Date(b.start_time)
-      return blockDate >= startOfDay(monthStart) && blockDate <= endOfDay(monthEnd)
+      return (
+        blockDate >= startOfDay(monthStart) && blockDate <= endOfDay(monthEnd)
+      )
     })
   }, [blocks, monthStart, monthEnd])
 

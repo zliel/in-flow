@@ -114,15 +114,21 @@ export default function BackgroundGrid({
                         }}
                         onClick={(e) => handleEventClick(block, e)}
                       >
-                        <p className={`truncate text-xs font-semibold ${contrast.textClass}`}>
+                        <p
+                          className={`truncate text-xs font-semibold ${contrast.textClass}`}
+                        >
                           {block.title || 'Untitled'}
                         </p>
-                        <p className={`truncate text-[10px] ${contrast.mutedTextClass}`}>
+                        <p
+                          className={`truncate text-[10px] ${contrast.mutedTextClass}`}
+                        >
                           {format(start, 'h:mm a')} - {format(end, 'h:mm a')}
                         </p>
                         {energyRequired !== null && (
                           <>
-                            <span className={`inline-flex items-center rounded-full px-1.5 py-0.5 font-medium ${contrast.badgeClass}`}>
+                            <span
+                              className={`inline-flex items-center rounded-full px-1.5 py-0.5 font-medium ${contrast.badgeClass}`}
+                            >
                               <HugeiconsIcon
                                 icon={EnergyIcon}
                                 strokeWidth={2}

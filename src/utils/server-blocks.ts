@@ -3,12 +3,7 @@ import { createServerSupabase } from './supabase-server'
 import { z } from 'zod'
 import { auth } from '@clerk/tanstack-react-start/server'
 import { randomUUID } from 'node:crypto'
-import {
-  addDays,
-  getDay,
-  setHours,
-  setMinutes,
-} from 'date-fns'
+import { addDays, getDay, setHours, setMinutes } from 'date-fns'
 import type { RecurrencePattern } from '@/types'
 
 const MAX_RECURRING_INSTANCES = 30
@@ -41,8 +36,18 @@ function generateRecurringInstances(
   let current = new Date(startTime)
 
   const shouldStop = (date: Date): boolean => {
-    if (pattern.endType === 'after' && pattern.endCount && count >= pattern.endCount) return true
-    if (pattern.endType === 'on' && pattern.endDate && date > new Date(pattern.endDate)) return true
+    if (
+      pattern.endType === 'after' &&
+      pattern.endCount &&
+      count >= pattern.endCount
+    )
+      return true
+    if (
+      pattern.endType === 'on' &&
+      pattern.endDate &&
+      date > new Date(pattern.endDate)
+    )
+      return true
     return false
   }
 
@@ -57,13 +62,19 @@ function generateRecurringInstances(
     } else if (pattern.frequency === 'weekdays') {
       include = dayOfWeek >= 1 && dayOfWeek <= 5
     } else if (pattern.frequency === 'weekly') {
-      include = !pattern.days || pattern.days.length === 0 || pattern.days.includes(dayOfWeek)
-    } else if (pattern.frequency === 'monthly') {
+      include =
+        !pattern.days ||
+        pattern.days.length === 0 ||
+        pattern.days.includes(dayOfWeek)
+    } else {
       include = current.getDate() === targetDayOfMonth
     }
 
     if (include) {
-      const instanceStart = setMinutes(setHours(new Date(current), startHour), startMin)
+      const instanceStart = setMinutes(
+        setHours(new Date(current), startHour),
+        startMin,
+      )
       const instanceEnd = new Date(instanceStart.getTime() + duration)
 
       instances.push({

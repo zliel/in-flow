@@ -7,7 +7,10 @@ import WeekGrid from '#/components/calendar/WeeklyGrid'
 import MonthGrid from '#/components/calendar/MonthGrid'
 import AddEventDialog from '#/components/calendar/AddEventDialog'
 import ManageBlockTypesDialog from '#/components/calendar/ManageBlockTypesDialog'
-import { CalendarProvider, useCalendar } from '#/components/calendar/CalendarContext'
+import {
+  CalendarProvider,
+  useCalendar,
+} from '#/components/calendar/CalendarContext'
 import { getBlocksAndBlockTypes } from '@/utils/server-blocks'
 
 export const Route = createFileRoute('/_authenticated/calendar')({
@@ -43,7 +46,10 @@ function RouteComponent() {
           <CalendarView />
         </div>
       </main>
-      <AddEventDialog blockTypes={blockTypes} onAddBlockType={() => setIsManageTypesOpen(true)} />
+      <AddEventDialog
+        blockTypes={blockTypes}
+        onAddBlockType={() => setIsManageTypesOpen(true)}
+      />
       <ManageBlockTypesDialog
         open={isManageTypesOpen}
         onOpenChange={setIsManageTypesOpen}

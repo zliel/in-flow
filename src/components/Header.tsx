@@ -12,9 +12,7 @@ const navLinks = [
   { to: '/about', label: 'About' },
 ] as const
 
-const authLinks = [
-  { to: '/dashboard', label: 'Dashboard' },
-] as const
+const authLinks = [{ to: '/dashboard', label: 'Dashboard' }] as const
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false)

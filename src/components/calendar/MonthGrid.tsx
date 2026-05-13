@@ -1,10 +1,11 @@
 import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { format, isSameDay, startOfDay, endOfDay, isSameMonth } from 'date-fns'
-import type { Block, BlockType } from '#/types'
+import type { Block } from '#/types'
 import { getMonthDays } from './CalendarHeader'
 import { useCalendar } from './CalendarContext'
 import { getBlocksAndBlockTypes } from '@/utils/server-blocks'
+import { getContrastColors } from '#/utils/color'
 
 const WEEK_DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
@@ -106,22 +107,26 @@ export default function MonthGrid() {
 
                     {/* Events */}
                     <div className="flex flex-col gap-0.5">
-                      {dayBlocks.slice(0, 3).map((block) => (
-                        <div
-                          key={block.id}
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            handleEventClick(block)
-                          }}
-                          className="truncate rounded px-1 py-0.5 text-[10px] font-medium text-white sm:text-xs"
-                          style={{
-                            backgroundColor: getBlockColor(block.block_type_id),
-                          }}
-                          title={block.title || 'Untitled'}
-                        >
-                          {block.title || 'Untitled'}
-                        </div>
-                      ))}
+                      {dayBlocks.slice(0, 3).map((block) => {
+                        const blockColor = getBlockColor(block.block_type_id)
+                        const contrast = getContrastColors(blockColor)
+                        return (
+                          <div
+                            key={block.id}
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              handleEventClick(block)
+                            }}
+                            className={`truncate rounded px-1 py-0.5 text-[10px] font-medium sm:text-xs ${contrast.textClass}`}
+                            style={{
+                              backgroundColor: blockColor,
+                            }}
+                            title={block.title || 'Untitled'}
+                          >
+                            {block.title || 'Untitled'}
+                          </div>
+                        )
+                      })}
                       {dayBlocks.length > 3 && (
                         <span className="text-[10px] font-medium text-(--text-muted) sm:text-xs">
                           +{dayBlocks.length - 3} more

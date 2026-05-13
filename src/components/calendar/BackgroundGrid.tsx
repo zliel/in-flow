@@ -4,6 +4,7 @@ import { computeEventLanes } from '#/utils/calendar'
 import type { EventLane } from '#/utils/calendar'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { EnergyIcon } from '@hugeicons/core-free-icons'
+import { getContrastColors } from '#/utils/color'
 
 interface BackgroundGridProps {
   days: Date[]
@@ -95,6 +96,7 @@ export default function BackgroundGrid({
                     const energyRequired = getEnergyRequired(
                       block.block_type_id,
                     )
+                    const contrast = getContrastColors(color)
                     return (
                       <div
                         key={block.id}
@@ -112,15 +114,15 @@ export default function BackgroundGrid({
                         }}
                         onClick={(e) => handleEventClick(block, e)}
                       >
-                        <p className="truncate text-xs font-semibold text-white">
+                        <p className={`truncate text-xs font-semibold ${contrast.textClass}`}>
                           {block.title || 'Untitled'}
                         </p>
-                        <p className="truncate text-[10px] text-white/80">
+                        <p className={`truncate text-[10px] ${contrast.mutedTextClass}`}>
                           {format(start, 'h:mm a')} - {format(end, 'h:mm a')}
                         </p>
                         {energyRequired !== null && (
                           <>
-                            <span className="inline-flex items-center rounded-full bg-white/20 px-1.5 py-0.5 font-medium text-white/90">
+                            <span className={`inline-flex items-center rounded-full px-1.5 py-0.5 font-medium ${contrast.badgeClass}`}>
                               <HugeiconsIcon
                                 icon={EnergyIcon}
                                 strokeWidth={2}

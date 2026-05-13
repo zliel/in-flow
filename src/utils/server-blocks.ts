@@ -303,7 +303,7 @@ export const createRecurringBlock = createServerFn()
     const instances = generateRecurringInstances(
       new Date(data.startTime),
       new Date(data.endTime),
-      data.recurrencePattern as RecurrencePattern,
+      data.recurrencePattern,
       userId!,
       data.blockTypeId ?? null,
       data.title ?? null,
@@ -378,7 +378,7 @@ export const updateRecurrenceGroup = createServerFn()
       const instances = generateRecurringInstances(
         new Date(data.startTime || parent.start_time),
         new Date(data.endTime || parent.end_time),
-        data.recurrencePattern as RecurrencePattern,
+        data.recurrencePattern,
         userId!,
         data.blockTypeId ?? parent.block_type_id,
         data.title ?? parent.title,

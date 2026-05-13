@@ -25,6 +25,7 @@ export default function WeeklyGrid() {
 
   const filteredBlocks = useMemo(() => {
     return blocks.filter((b) => {
+      if (b.is_recurring) return false
       const blockDate = new Date(b.start_time)
       return blockDate >= start && blockDate <= end
     })

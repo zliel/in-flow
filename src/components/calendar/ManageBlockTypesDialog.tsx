@@ -31,7 +31,7 @@ type ViewMode = 'list' | 'form'
 
 interface ManageBlockTypesDialogProps {
   open: boolean
-  onOpenChange: (open: boolean) => void
+  onOpenChange: (isOpen: boolean) => void
   blockTypes: BlockType[]
 }
 
@@ -69,7 +69,7 @@ function EnergyDots({ level }: { level: number }) {
         <div
           key={i}
           className={`size-2.5 rounded-full ${
-            i < level ? energyColors[level] : 'bg-(--border)'
+            i < level ? energyColors[level] : 'bg-border'
           }`}
         />
       ))}
@@ -183,7 +183,7 @@ function BlockTypeForm({
             type="color"
             value={color}
             onChange={(e) => setColor(e.target.value)}
-            className="size-9 cursor-pointer rounded-lg border border-(--border) bg-transparent p-0.5"
+            className="size-9 cursor-pointer rounded-lg border border-border bg-transparent p-0.5"
           />
           <div className="flex gap-1.5">
             {colorPresets.map((c) => (
@@ -272,14 +272,14 @@ export default function ManageBlockTypesDialog({
     },
   })
 
-  const handleOpenChange = (open: boolean) => {
-    if (!open) {
+  const handleOpenChange = (isOpen: boolean) => {
+    if (!isOpen) {
       setMode('list')
       setEditingBlockType(null)
       setDeletingBlockType(null)
       setDeleteConfirmOpen(false)
     }
-    onOpenChange(open)
+    onOpenChange(isOpen)
   }
 
   const handleEdit = (bt: BlockType) => {

@@ -101,13 +101,17 @@ export function DateTimePicker({
           </Button>
         </PopoverTrigger>
         <PopoverContent
-          className="w-auto overflow-hidden rounded-2xl p-0"
+          className="w-auto rounded-2xl p-0"
+          style={{ maxHeight: 'min(60vh, 400px)', overflowY: 'auto' }}
           align="start"
+          sideOffset={4}
+          collisionPadding={{ top: 16, bottom: 16 }}
         >
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className="rounded-2xl"
           >
             <div className="flex flex-col gap-4 p-3">
               <Calendar

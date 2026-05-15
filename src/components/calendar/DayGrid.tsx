@@ -126,10 +126,10 @@ export default function DayGrid() {
     // setDraggedBlock(null) above — React renders them together, no flash)
     queryClient.setQueriesData({ queryKey: ['blocks'] }, (old: unknown) => {
       if (!old || typeof old !== 'object') return old
-      const data = old as { blocks: Block[]; blockTypes: BlockType[] }
+      const cached = old as { blocks: Block[]; blockTypes: BlockType[] }
       return {
-        ...data,
-        blocks: data.blocks.map((b: Block) =>
+        ...cached,
+        blocks: cached.blocks.map((b: Block) =>
           b.id === activeData.blockId
             ? { ...b, start_time: newStartISO, end_time: newEndISO }
             : b,
@@ -146,8 +146,8 @@ export default function DayGrid() {
       {
         onError: () => {
           // Rollback to pre-optimistic state if the server call fails
-          for (const [key, data] of allPrevious) {
-            queryClient.setQueryData(key, data)
+          for (const [key, cachedData] of allPrevious) {
+            queryClient.setQueryData(key, cachedData)
           }
         },
       },
@@ -178,10 +178,10 @@ export default function DayGrid() {
       <DragOverlay dropAnimation={null}>
         {draggedBlock
           ? (() => {
-              const start = new Date(draggedBlock.start_time)
-              const end = new Date(draggedBlock.end_time)
+              const blockStart = new Date(draggedBlock.start_time)
+              const blockEnd = new Date(draggedBlock.end_time)
               const durationPx = Math.max(
-                ((end.getTime() - start.getTime()) / (1000 * 60 * 60)) * 80,
+                ((blockEnd.getTime() - blockStart.getTime()) / (1000 * 60 * 60)) * 80,
                 24,
               )
               return (

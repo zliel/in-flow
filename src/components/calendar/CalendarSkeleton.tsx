@@ -41,7 +41,7 @@ export function WeekSkeleton() {
         </div>
 
         {/* Hour rows */}
-        {HOURS_SKELETON.map((_, i) => (
+        {HOURS_SKELETON.map((_val, i) => (
           <div
             key={i}
             className="flex border-b border-(--border)"
@@ -84,7 +84,7 @@ export function MonthSkeleton() {
         ))}
       </div>
       {/* Week rows */}
-      {Array.from({ length: 5 }, (_, w) => (
+      {Array.from({ length: 5 }, (_val, w) => (
         <div
           key={w}
           className="grid grid-cols-7 gap-2 border-t border-(--border) py-3"

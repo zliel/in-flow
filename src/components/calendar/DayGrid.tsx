@@ -6,6 +6,7 @@ import DayHeaderRow from './DayHeaderRow'
 import BackgroundGrid from './BackgroundGrid'
 import { useCalendar } from './CalendarContext'
 import { getBlocksAndBlockTypes } from '@/utils/server-blocks'
+import { DaySkeleton } from './CalendarSkeleton'
 
 export default function DayGrid() {
   const { currentDate, setSelectedBlock, setIsAddEventOpen } = useCalendar()
@@ -14,7 +15,7 @@ export default function DayGrid() {
   const start = startOfDay(currentDate)
   const end = endOfDay(currentDate)
 
-  const { data } = useQuery({
+  const { data, isPending } = useQuery({
     queryKey: ['blocks', format(currentDate, 'yyyy-MM-dd')],
     queryFn: async () => await getBlocksAndBlockTypes(),
   })
@@ -33,6 +34,10 @@ export default function DayGrid() {
   const handleEventClick = (block: Block) => {
     setSelectedBlock(block)
     setIsAddEventOpen(true)
+  }
+
+  if (isPending) {
+    return <DaySkeleton />
   }
 
   return (

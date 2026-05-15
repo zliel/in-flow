@@ -7,6 +7,7 @@ import DayHeaderRow from './DayHeaderRow'
 import BackgroundGrid from './BackgroundGrid'
 import { useCalendar } from './CalendarContext'
 import { getBlocksAndBlockTypes } from '@/utils/server-blocks'
+import { WeekSkeleton } from './CalendarSkeleton'
 
 export default function WeeklyGrid() {
   const { currentDate, setSelectedBlock, setIsAddEventOpen } = useCalendar()
@@ -15,7 +16,7 @@ export default function WeeklyGrid() {
   const start = startOfWeek(currentDate, { weekStartsOn: 0 })
   const end = endOfWeek(currentDate, { weekStartsOn: 0 })
 
-  const { data } = useQuery({
+  const { data, isPending } = useQuery({
     queryKey: ['blocks', format(currentDate, 'yyyy-MM-dd')],
     queryFn: async () => await getBlocksAndBlockTypes(),
   })
@@ -34,6 +35,10 @@ export default function WeeklyGrid() {
   const handleEventClick = (block: Block) => {
     setSelectedBlock(block)
     setIsAddEventOpen(true)
+  }
+
+  if (isPending) {
+    return <WeekSkeleton />
   }
 
   return (

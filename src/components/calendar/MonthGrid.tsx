@@ -11,8 +11,13 @@ import { MonthSkeleton } from './CalendarSkeleton'
 const WEEK_DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
 export default function MonthGrid() {
-  const { currentDate, setSelectedBlock, setIsAddEventOpen, setCurrentDate, viewMode } =
-    useCalendar()
+  const {
+    currentDate,
+    setSelectedBlock,
+    setIsAddEventOpen,
+    setCurrentDate,
+    viewMode,
+  } = useCalendar()
   const monthDays = useMemo(() => getMonthDays(currentDate), [currentDate])
 
   const { data, isPending } = useQuery({

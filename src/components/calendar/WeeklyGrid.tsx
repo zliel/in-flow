@@ -177,32 +177,35 @@ export default function WeeklyGrid() {
         </table>
       </div>
       <DragOverlay dropAnimation={null}>
-        {draggedBlock ? (
-          (() => {
-            const start = new Date(draggedBlock.start_time)
-            const end = new Date(draggedBlock.end_time)
-            const durationPx = Math.max(
-              ((end.getTime() - start.getTime()) / (1000 * 60 * 60)) * 80,
-              24,
-            )
-            return (
-              <div
-                className="rounded-lg px-2 py-1 shadow-xl opacity-90"
-                style={{
-                  backgroundColor:
-                    blockTypeMap.get(draggedBlock.block_type_id ?? '')?.color ||
-                    'var(--primary)',
-                  width: 'calc((100dvw - 7rem) / 7)',
-                  height: durationPx,
-                  minWidth: '120px',
-                  maxWidth: '220px',
-                }}
-              >
-                <EventContent block={draggedBlock} blockTypeMap={blockTypeMap} />
-              </div>
-            )
-          })()
-        ) : null}
+        {draggedBlock
+          ? (() => {
+              const start = new Date(draggedBlock.start_time)
+              const end = new Date(draggedBlock.end_time)
+              const durationPx = Math.max(
+                ((end.getTime() - start.getTime()) / (1000 * 60 * 60)) * 80,
+                24,
+              )
+              return (
+                <div
+                  className="rounded-lg px-2 py-1 shadow-xl opacity-90"
+                  style={{
+                    backgroundColor:
+                      blockTypeMap.get(draggedBlock.block_type_id ?? '')
+                        ?.color || 'var(--primary)',
+                    width: 'calc((100dvw - 7rem) / 7)',
+                    height: durationPx,
+                    minWidth: '120px',
+                    maxWidth: '220px',
+                  }}
+                >
+                  <EventContent
+                    block={draggedBlock}
+                    blockTypeMap={blockTypeMap}
+                  />
+                </div>
+              )
+            })()
+          : null}
       </DragOverlay>
     </DndContext>
   )

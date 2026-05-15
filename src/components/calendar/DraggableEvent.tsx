@@ -17,8 +17,10 @@ export default function DraggableEvent({
   children,
   data,
 }: DraggableEventProps) {
-  const { attributes, listeners, setNodeRef, isDragging } =
-    useDraggable({ id, data })
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
+    id,
+    data,
+  })
 
   return (
     <div

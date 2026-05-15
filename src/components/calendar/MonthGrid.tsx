@@ -72,7 +72,7 @@ export default function MonthGrid() {
 
   return (
     <div className="h-[calc(100vh-120px)] overflow-auto p-2 sm:p-4">
-      <div className="h-full min-w-[320px] rounded-xl border border-border bg-(--background-elevated)">
+      <div className="min-h-full min-w-[320px] rounded-xl border border-border bg-(--background-elevated)">
         {/* Day headers */}
         <div className="grid grid-cols-7 border-b border-border">
           {WEEK_DAYS.map((day) => (
@@ -92,7 +92,7 @@ export default function MonthGrid() {
           {weeks.map((week, weekIdx) => (
             <div
               key={weekIdx}
-              className="grid flex-1 grid-cols-7 border-b border-border last:border-b-0"
+              className="grid grid-cols-7 border-b border-border"
             >
               {week.map((day) => {
                 const isCurrentMonth = isSameMonth(day, currentDate)

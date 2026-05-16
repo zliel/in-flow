@@ -182,7 +182,9 @@ export default function WeeklyGrid() {
               const blockStart = new Date(draggedBlock.start_time)
               const blockEnd = new Date(draggedBlock.end_time)
               const durationPx = Math.max(
-                ((blockEnd.getTime() - blockStart.getTime()) / (1000 * 60 * 60)) * 80,
+                ((blockEnd.getTime() - blockStart.getTime()) /
+                  (1000 * 60 * 60)) *
+                  80,
                 24,
               )
               return (

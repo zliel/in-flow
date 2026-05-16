@@ -5,10 +5,50 @@ import type { EventLane } from '#/utils/calendar'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { EnergyIcon } from '@hugeicons/core-free-icons'
 import { getContrastColors } from '#/utils/color'
+import DraggableEvent from './DraggableEvent'
+import DroppableHourSlot from './DroppableHourSlot'
+
+export function EventContent({
+  block,
+  blockTypeMap,
+}: {
+  block: Block
+  blockTypeMap: Map<string, BlockType>
+}) {
+  const blockType = block.block_type_id
+    ? blockTypeMap.get(block.block_type_id)
+    : undefined
+  const color = blockType?.color || 'var(--primary)'
+  const energyRequired = blockType?.default_energy_required ?? null
+  const contrast = getContrastColors(color)
+  const start = new Date(block.start_time)
+  const end = new Date(block.end_time)
+
+  return (
+    <div className="flex h-full flex-col gap-0.5 overflow-hidden">
+      <div className="flex items-start justify-between gap-1">
+        <p className={`truncate text-xs font-semibold ${contrast.textClass}`}>
+          {block.title || 'Untitled'}
+        </p>
+        {energyRequired !== null && (
+          <span
+            className={`inline-flex shrink-0 items-center gap-0.5 rounded px-1 py-0.5 text-[10px] font-medium leading-none ${contrast.badgeClass}`}
+          >
+            <HugeiconsIcon icon={EnergyIcon} strokeWidth={2} size={12} />
+            <span>{energyRequired}</span>
+          </span>
+        )}
+      </div>
+      <p className={`truncate text-[10px] ${contrast.mutedTextClass}`}>
+        {format(start, 'h:mm a')} - {format(end, 'h:mm a')}
+      </p>
+    </div>
+  )
+}
 
 interface BackgroundGridProps {
   days: Date[]
-  blockTypes: BlockType[]
+  blockTypes: Map<string, BlockType>
   filteredBlocks: Block[]
   hourHeight?: number
   onEventClick?: (block: Block) => void
@@ -19,23 +59,11 @@ const DEFAULT_HOUR_HEIGHT = 80
 
 export default function BackgroundGrid({
   days,
-  blockTypes,
+  blockTypes: blockTypeMap,
   filteredBlocks,
   hourHeight = DEFAULT_HOUR_HEIGHT,
   onEventClick,
 }: BackgroundGridProps) {
-  const getBlockColor = (blockTypeId: string | null) => {
-    if (!blockTypeId) return 'var(--primary)'
-    const bt = blockTypes.find((t) => t.id === blockTypeId)
-    return bt?.color || 'var(--primary)'
-  }
-
-  const getEnergyRequired = (blockTypeId: string | null): number | null => {
-    if (!blockTypeId) return null
-    const bt = blockTypes.find((t) => t.id === blockTypeId)
-    return bt?.default_energy_required ?? null
-  }
-
   const handleEventClick = (block: Block, e: React.MouseEvent) => {
     e.stopPropagation()
     onEventClick?.(block)
@@ -70,9 +98,13 @@ export default function BackgroundGrid({
             const laneMap = computeEventLanes(dayBlocks, day)
 
             return (
-              <td
+              <DroppableHourSlot
                 key={`${day.toISOString()}-${hour}`}
-                className="relative border-t border-l border-border p-0"
+                id={`slot-${format(day, 'yyyy-MM-dd')}-${hour}`}
+                data={{
+                  day: format(day, 'yyyy-MM-dd'),
+                  hour,
+                }}
                 style={{ height: hourHeight }}
               >
                 {dayBlocks
@@ -84,7 +116,10 @@ export default function BackgroundGrid({
                       (end.getHours() - start.getHours()) * hourHeight +
                       ((end.getMinutes() - start.getMinutes()) / 60) *
                         hourHeight
-                    const color = getBlockColor(block.block_type_id)
+                    const blockType = block.block_type_id
+                      ? blockTypeMap.get(block.block_type_id)
+                      : undefined
+                    const color = blockType?.color || 'var(--primary)'
                     const laneData: EventLane | undefined = laneMap.get(
                       block.id,
                     )
@@ -93,56 +128,40 @@ export default function BackgroundGrid({
                     const widthPercent = 100 / totalLanes
                     const leftPercent = lane * widthPercent
 
-                    const energyRequired = getEnergyRequired(
-                      block.block_type_id,
-                    )
-                    const contrast = getContrastColors(color)
                     return (
-                      <div
+                      <DraggableEvent
                         key={block.id}
-                        className="absolute inset-x-1 cursor-pointer select-none rounded-lg px-2 py-1 hover:scale-[1.02] hover:shadow-lg"
-                        style={{
-                          top: `${(start.getMinutes() / 60) * hourHeight}px`,
-                          height: `${Math.max(duration, 24)}px`,
-                          width: `${widthPercent - 2}%`,
-                          left: `${leftPercent + 1}%`,
-                          backgroundColor: color,
-                          borderLeft: `3px solid ${color}`,
-                          zIndex: 10,
-                          transition:
-                            'background-color 500ms ease-in-out, border-color 500ms ease-in-out, box-shadow 200ms, scale 200ms ease-in-out, height 200ms ease-in-out',
+                        id={block.id}
+                        data={{
+                          blockId: block.id,
+                          startHour: start.getHours(),
+                          startMinute: start.getMinutes(),
+                          durationMinutes:
+                            (end.getTime() - start.getTime()) / 60000,
                         }}
-                        onClick={(e) => handleEventClick(block, e)}
                       >
-                        <p
-                          className={`truncate text-xs font-semibold ${contrast.textClass}`}
+                        <div
+                          className="absolute inset-x-1 select-none rounded-lg px-2 py-1 hover:scale-[1.02] hover:shadow-lg"
+                          style={{
+                            top: `${(start.getMinutes() / 60) * hourHeight}px`,
+                            height: `${Math.max(duration, 24)}px`,
+                            width: `${widthPercent - 2}%`,
+                            left: `${leftPercent + 1}%`,
+                            backgroundColor: color,
+                            borderLeft: `3px solid ${color}`,
+                            zIndex: 10,
+                          }}
+                          onClick={(e) => handleEventClick(block, e)}
                         >
-                          {block.title || 'Untitled'}
-                        </p>
-                        <p
-                          className={`truncate text-[10px] ${contrast.mutedTextClass}`}
-                        >
-                          {format(start, 'h:mm a')} - {format(end, 'h:mm a')}
-                        </p>
-                        {energyRequired !== null && (
-                          <>
-                            <span
-                              className={`inline-flex items-center rounded-full px-1.5 py-0.5 font-medium ${contrast.badgeClass}`}
-                            >
-                              <HugeiconsIcon
-                                icon={EnergyIcon}
-                                strokeWidth={2}
-                                size={18}
-                                className="mr-0.5"
-                              />
-                              {energyRequired}
-                            </span>
-                          </>
-                        )}
-                      </div>
+                          <EventContent
+                            block={block}
+                            blockTypeMap={blockTypeMap}
+                          />
+                        </div>
+                      </DraggableEvent>
                     )
                   })}
-              </td>
+              </DroppableHourSlot>
             )
           })}
         </tr>
